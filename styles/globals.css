@@ -1,0 +1,110 @@
+/* styles/globals.css */
+
+/* Import Tailwind CSS base styles */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Import Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Roboto:wght@400;700&display=swap');
+
+/* Body and Font Setup */
+body {
+  @apply bg-black text-white;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  font-family: 'Roboto', sans-serif;
+}
+
+/* Headings */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  @apply font-orbitron text-neon-green;
+}
+
+/* Links */
+a {
+  color: #00FF00; /* Neon green */
+  text-decoration: none;
+}
+
+a:hover {
+  color: #0fce6d;
+}
+
+/* Buttons */
+button {
+  @apply bg-green-600 text-white px-4 py-2 rounded-md font-bold transition duration-300 ease-in-out;
+}
+
+button:hover {
+  background-color: #FF0000; /* Red color on hover */
+}
+
+button:disabled {
+  @apply bg-gray-600 cursor-not-allowed opacity-50;
+}
+
+/* Scrollbar Styles */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #0fce6d; /* Neon green */
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: #121212; /* Dark background */
+}
+
+/* Analytics Grid Container */
+.analytics-container {
+  @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4;
+}
+
+/* Analytics Card */
+.analytics-card {
+  @apply bg-black text-white rounded-lg p-4 flex flex-col;
+  height: 400px; /* Ensure consistent height */
+}
+
+/* Live Chat Card */
+.commentary {
+  @apply bg-black rounded-lg flex flex-col h-full text-neon-green;
+}
+
+/* Video Player Styles */
+.video-container {
+  @apply relative bg-black border border-gray-700;
+}
+
+/* AI Watching Indicator */
+.ai-watching {
+  @apply absolute top-4 right-4 bg-gray-500 bg-opacity-50 text-white px-2 py-1 rounded animate-pulse;
+}
+
+/* Custom Fonts */
+.font-orbitron {
+  font-family: 'Orbitron', sans-serif;
+}
+
+.font-roboto {
+  font-family: 'Roboto', sans-serif;
+}
+
+/* Custom Colors */
+.text-neon-green {
+  color: #00FF00;
+}
+
+.text-neon-purple {
+  color: #DA70D6;
+}
