@@ -1,7 +1,11 @@
 import { query, initializeDatabase } from "../../lib/singleStoreClient";
 // backend code btw
+let commentaryTable = null;
 export default async function handler(req, res) {
   if (req.method === "GET") {
+    if (commentaryTable){
+      return commentaryTable;
+    }
     try {
       const { userPrompt, timeRange } = req.query;
 

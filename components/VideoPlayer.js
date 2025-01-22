@@ -38,7 +38,7 @@ export default function VideoPlayer({ videoSrc }) {
     fetchLatestAnalytics();
     const intervalId = setInterval(() => {
       fetchLatestAnalytics();
-    }, 2000); // Fetch analytics every 2 seconds
+    }, 3000); // Fetch analytics every 2 seconds
 
     return () => clearInterval(intervalId);
   }, [fetchLatestAnalytics]);
@@ -48,7 +48,7 @@ export default function VideoPlayer({ videoSrc }) {
     if (!commentaryIntervalRef.current) {
       commentaryIntervalRef.current = setInterval(() => {
         fetchCommentary();
-      }, 2000);
+      }, 3000);
     }
   }, []);
 
