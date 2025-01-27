@@ -10,7 +10,7 @@ export default function Layout({ children }) {
         <title>Real-time NBA Analytics</title>
         <meta
           name="description"
-          content="AI-powered NBA analytics and commentary"
+          content="AI-powered F1 analytics and commentary"
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>
@@ -26,7 +26,7 @@ export default function Layout({ children }) {
           {/* Center */}
           <div className="flex-1 text-center">
             <Link href="/" className="text-3xl font-bold text-neon-green font-orbitron">
-              NBA OnTheFlyAI
+              F1 OnTheFlyAI
             </Link>
           </div>
 
