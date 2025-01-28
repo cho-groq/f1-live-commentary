@@ -42,7 +42,14 @@ export default async function handler(req, res) {
         },
       );
 
-      console.log("Similarity search performed with prompt:", vectorSearch);
+      // console.log("Similarity search performed with prompt:", vectorSearch);
+      
+      // delete the rows for storage purposes
+      // const delee = await query(`
+      //   DELETE
+      //   FROM commentary_table
+      // `);
+
 
       // Fetch commentaries over time
       const commentariesOverTime = await query(`
@@ -53,7 +60,7 @@ export default async function handler(req, res) {
         ORDER BY date
       `);
 
-      console.log("Fetched commentaries over time:", commentariesOverTime);
+      // console.log("Fetched commentaries over time:", commentariesOverTime);
 
       // Fetch the last 10 commentary entries
       const latestCommentaries = await query(`
@@ -64,7 +71,7 @@ export default async function handler(req, res) {
         LIMIT 10
       `);
 
-      console.log("Fetched latest commentaries:", latestCommentaries);
+      // console.log("Fetched latest commentaries:", latestCommentaries);
 
       const latestLatency = await query(`
         SELECT timestamp, latency
@@ -74,7 +81,7 @@ export default async function handler(req, res) {
         LIMIT 10
       `);
 
-      console.log("Fetched latest latency:", latestLatency);
+      // console.log("Fetched latest latency:", latestLatency);
 
       // Calculate total commentaries
       const totalCommentaries = await query(`
@@ -83,7 +90,7 @@ export default async function handler(req, res) {
         ${timeFilter}
       `);
 
-      console.log("Total commentaries:", totalCommentaries);
+      // console.log("Total commentaries:", totalCommentaries);
 
       // Fetch scores over time
       const scoresOverTime = await query(`
@@ -93,7 +100,7 @@ export default async function handler(req, res) {
         ORDER BY timestamp
       `);
 
-      console.log("Fetched scores over time:", scoresOverTime);
+      // console.log("Fetched scores over time:", scoresOverTime);
 
       // Fetch win probability over time
       const winProbabilityOverTime = await query(`
@@ -103,7 +110,7 @@ export default async function handler(req, res) {
         ORDER BY timestamp
       `);
 
-      console.log("Fetched win probability over time:", winProbabilityOverTime);
+      // console.log("Fetched win probability over time:", winProbabilityOverTime);
 
       const analyticsData = {
         latestCommentaries,

@@ -2,12 +2,14 @@
 
 import Head from 'next/head';
 import Link from 'next/link';
+import Image from 'next/image'; 
+
 
 export default function Layout({ children }) {
   return (
     <div>
       <Head>
-        <title>Real-time NBA Analytics</title>
+        <title>Real-time F1 Analytics</title>
         <meta
           name="description"
           content="AI-powered F1 analytics and commentary"
@@ -18,9 +20,12 @@ export default function Layout({ children }) {
         <div className="container mx-auto flex items-center">
           {/* Left Side */}
           <div className="flex-1">
-            <span className="text-neon-purple text-sm font-roboto">
-              Powered with ❤️ on SingleStore
-            </span>
+          <Image 
+        src="/pbg.png" // Path to the image in the 'public' folder
+        alt="Description of the image"
+        width={200} 
+        height={200} 
+      />
           </div>
 
           {/* Center */}

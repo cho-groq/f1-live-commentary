@@ -7,7 +7,7 @@ function MyApp({ Component, pageProps }) {
   return (
     <>
       <Head>
-        <title>NBA Analytics</title>
+        <title>F1 Analytics</title>
         <link
           href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Roboto:wght@400;700&display=swap"
           rel="stylesheet"
