@@ -38,7 +38,7 @@ export default function Layout({ children }) {
           {/* Right Side */}
           <div className="flex-1 flex justify-end">
             <ul className="flex space-x-4">
-              <li>
+              {/* <li>
                 <Link href="/" className="hover:text-green-400 text-neon-green font-orbitron">
                   Home
                 </Link>
@@ -47,7 +47,7 @@ export default function Layout({ children }) {
                 <Link href="/analytics" className="hover:text-green-400 text-neon-green font-orbitron">
                   Analytics
                 </Link>
-              </li>
+              </li> */}
             </ul>
           </div>
         </div>

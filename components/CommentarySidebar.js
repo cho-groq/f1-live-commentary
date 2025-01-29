@@ -7,7 +7,6 @@ export default function CommentarySidebar({
   onSendMessage,
   showAIMessages,
   onToggleAIMessages,
-  onGenerateCommentary,
   isAIWatching,
 }) {
   const chatBoxRef = useRef(null);
@@ -32,7 +31,7 @@ export default function CommentarySidebar({
   return (
     <div
       className="commentary bg-black rounded-lg flex flex-col h-full text-neon-green"
-      style={{ maxHeight: '80vh' }}
+      style={{ maxHeight: '70vh' }}
     >
       <div className="p-4 bg-black border-b border-gray-600 flex-shrink-0">
         <h2 className="text-2xl font-bold mb-2">Live Chat</h2>
@@ -89,7 +88,7 @@ export default function CommentarySidebar({
         </button>
         <button
           type="button"
-          onClick={onGenerateCommentary}
+          // onClick={onGenerateCommentary}
           className="generate-commentary"
           disabled={isAIWatching}
         >

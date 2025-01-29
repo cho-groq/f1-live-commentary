@@ -32,7 +32,7 @@ export default async function handler(req, res) {
 
     const mp3 = await openai.audio.speech.create({
       model: 'tts-1',
-      voice: 'alloy',
+      voice: 'ash',
       input: prompt,
     });
 

@@ -62,16 +62,20 @@ export default function VideoPlayer({ videoSrc }) {
 
  // Function to start commentary fetching interval
  const startCommentaryInterval = useCallback(() => {
+  // Fetch immediately on start
+  if (!processingRef.current) {
+    fetchCommentary();
+  }
+
+  // Set up interval for subsequent fetches
   if (!commentaryIntervalRef.current) {
     commentaryIntervalRef.current = setInterval(async () => {
-      // Only fetch if not currently processing
       if (!processingRef.current) {
         await fetchCommentary();
       }
     }, 3000);
   }
 }, []);
-
 // Add a stop function
 const stopCommentaryInterval = useCallback(() => {
   if (commentaryIntervalRef.current) {
@@ -118,6 +122,80 @@ useEffect(() => {
     }
   }, [startCommentaryInterval, stopCommentaryInterval]);
 
+  
+
+  // Function to handle text-to-speech when the "Speak" button is clicked
+  const handleTextToSpeech = useCallback(async () => {
+    if (commentary.length === 0) {
+      // alert("No commentary available for speech synthesis.");
+      return;
+    }
+
+    const lastCommentary = commentary[commentary.length - 1].text;
+
+    console.log("LastCommentary: " +lastCommentary);
+    try {
+      const response = await fetch('/api/tts', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          lastCommentary
+        }),
+      });
+      console.log("api response:");
+      console.log(response);
+  
+      if (!response.ok) {
+        throw new Error('Failed to generate speech');
+      }
+
+      
+      
+      const audioBlob = await response.blob();
+
+      console.log("blob response:");
+      console.log(audioBlob);
+      const audioUrl = URL.createObjectURL(audioBlob);
+
+      console.log("audio url response:");
+      console.log(audioUrl);
+      // Create and play the audio
+      const audio = new Audio(audioUrl);
+      audio.playbackRate = 2.0;
+      audio.play();
+
+       // Create an audio element to play the audio
+  // const audioElement = new Audio();
+  // audioElement.src = URL.createObjectURL(audio);
+  // audioElement.play();
+    } catch (error) {
+      console.error('Error:', error);
+      alert("Failed to generate speech. Please try again.");
+    }
+  }, [commentary]);
+
+  const [isPlaying, setIsPlaying] = useState(false);
+  useEffect(() => {
+    // Only set up the interval if we're not currently playing audio
+    if (!isPlaying) {
+      const intervalId = setInterval(async () => {
+        if (commentary.length === 0) return;
+        
+        setIsPlaying(true);
+        try {
+          await handleTextToSpeech();
+        } finally {
+          setIsPlaying(false);
+        }
+      }, 1500);
+  
+      // Clean up the interval when the component unmounts
+      return () => clearInterval(intervalId);
+    }
+  }, [handleTextToSpeech, commentary, isPlaying]);
+
 
   const fetchCommentary = useCallback(async () => {
     try {
@@ -133,8 +211,13 @@ useEffect(() => {
 
      // Calculate pastCommentaries inside the callback using the ref
      let pastCommentaries = "None";
-     if (commentaryRef.current && commentaryRef.current.length > 2) {
+    
+     if (commentaryRef.current && commentaryRef.current.length > 1) {
        const lastN = commentaryRef.current.slice(-2);
+       pastCommentaries = lastN.map(item => item.text).join(' ');
+     }
+     else if (commentaryRef.current && commentaryRef.current.length > 0) {
+      const lastN = commentaryRef.current.slice(-1);
        pastCommentaries = lastN.map(item => item.text).join(' ');
      }
 
@@ -194,57 +277,7 @@ useEffect(() => {
     ]);
   }, []);
 
-  // Function to handle text-to-speech when the "Speak" button is clicked
-  const handleTextToSpeech = useCallback(async () => {
-    if (commentary.length === 0) {
-      alert("No commentary available for speech synthesis.");
-      return;
-    }
-
-    const lastCommentary = commentary[commentary.length - 1].text;
-
-    console.log("LastCommentary: " +lastCommentary);
-    try {
-      const response = await fetch('/api/tts', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          lastCommentary
-        }),
-      });
-      console.log("api response:");
-      console.log(response);
   
-      if (!response.ok) {
-        throw new Error('Failed to generate speech');
-      }
-
-      
-      
-      const audioBlob = await response.blob();
-
-      console.log("blob response:");
-      console.log(audioBlob);
-      const audioUrl = URL.createObjectURL(audioBlob);
-
-      console.log("audio url response:");
-      console.log(audioUrl);
-      // Create and play the audio
-      const audio = new Audio(audioUrl);
-      audio.play();
-
-       // Create an audio element to play the audio
-  // const audioElement = new Audio();
-  // audioElement.src = URL.createObjectURL(audio);
-  // audioElement.play();
-    } catch (error) {
-      console.error('Error:', error);
-      alert("Failed to generate speech. Please try again.");
-    }
-  }, [commentary]);
-
   
   // Chart components
 
@@ -476,6 +509,7 @@ useEffect(() => {
         <div className="w-2/3 p-4 flex flex-col">
           <div className="video-container">
             <video
+            muted
               ref={videoRef}
               src={videoSrc}
               controls
@@ -487,15 +521,15 @@ useEffect(() => {
           </div>
         </div>
         <div className="w-1/3 p-4 flex flex-col" style={{ maxHeight: "80vh" }}>
-        <div className="relative w-48 h-12 bg-slate-600 rounded-lg">
-      <button
+        <div className="relative w-48 h-12 bg-slate-600 rounded-lg -mt-12 mb-10">
+        <button
         onClick={handleToggle}
-        className={`absolute w-24 h-full rounded-lg transition-transform duration-300 ease-in-out hover:bg-green-600 ${
-          isArabic ? 'translate-x-24 bg-green-500' : 'translate-x-0 bg-green-500'
+        className={`absolute h-12 w-24 rounded-lg bg-green-500 transition-transform duration-300 ease-in-out hover:bg-green-600  ${
+          isArabic ? 'translate-x-24' : 'translate-x-0'
         }`}
       >
-        <span className="inline-block w-full text-center">
-          {isArabic ? 'العربية':'English'}
+        <span className="inline-block w-full text-center text-white">
+          {isArabic ? 'العربية' : 'English'}
         </span>
       </button>
     </div>
@@ -503,7 +537,7 @@ useEffect(() => {
             commentary={commentary}
             showAIMessages={showAIMessages}
             onToggleAIMessages={() => setShowAIMessages(!showAIMessages)}
-            onGenerateCommentary={handleTextToSpeech}
+            // onGenerateCommentary={handleTextToSpeech}
             isAIWatching={isAIWatching}
             onSendMessage={onSendMessage}
           />
