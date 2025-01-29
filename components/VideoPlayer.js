@@ -1,6 +1,6 @@
 // components/VideoPlayer.js
 
-import { useRef, useEffect, useState, useCallback } from "react";
+import { useRef, useEffect, useState, useCallback, useMemo } from "react";
 import CommentarySidebar from "./CommentarySidebar";
 import {
   LineChart,
@@ -22,7 +22,24 @@ export default function VideoPlayer({ videoSrc }) {
   const [analyticsData, setAnalyticsData] = useState({});
   const [showAnalytics, setShowAnalytics] = useState(true);
   const [isVideoPlaying, setIsVideoPlaying] = useState(false);
+  const [isArabic, setIsArabic] = useState(false);
   const commentaryIntervalRef = useRef(null);
+
+  const isArabicRef = useRef(isArabic);
+  const commentaryRef = useRef(commentary);
+  const processingRef = useRef(false);
+
+  const handleToggle = () => {
+    setIsArabic(!isArabic);
+    console.log(isArabic);
+  };
+
+  // Keep refs updated
+  useEffect(() => {
+    isArabicRef.current = isArabic;
+    commentaryRef.current = commentary;
+  }, [isArabic, commentary]);
+
 
   const fetchLatestAnalytics = useCallback(async () => {
     try {
@@ -43,22 +60,34 @@ export default function VideoPlayer({ videoSrc }) {
     return () => clearInterval(intervalId);
   }, [fetchLatestAnalytics]);
 
-  // Function to start commentary fetching interval
-  const startCommentaryInterval = useCallback(() => {
-    if (!commentaryIntervalRef.current) {
-      commentaryIntervalRef.current = setInterval(() => {
-        fetchCommentary();
-      }, 3000);
-    }
-  }, []);
+ // Function to start commentary fetching interval
+ const startCommentaryInterval = useCallback(() => {
+  if (!commentaryIntervalRef.current) {
+    commentaryIntervalRef.current = setInterval(async () => {
+      // Only fetch if not currently processing
+      if (!processingRef.current) {
+        await fetchCommentary();
+      }
+    }, 3000);
+  }
+}, []);
 
-  // Function to stop commentary fetching interval
-  const stopCommentaryInterval = useCallback(() => {
+// Add a stop function
+const stopCommentaryInterval = useCallback(() => {
+  if (commentaryIntervalRef.current) {
+    clearInterval(commentaryIntervalRef.current);
+    commentaryIntervalRef.current = null;
+  }
+}, []);
+
+// Clean up on unmount
+useEffect(() => {
+  return () => {
     if (commentaryIntervalRef.current) {
       clearInterval(commentaryIntervalRef.current);
-      commentaryIntervalRef.current = null;
     }
-  }, []);
+  };
+}, []);
 
   useEffect(() => {
     const video = videoRef.current;
@@ -89,6 +118,7 @@ export default function VideoPlayer({ videoSrc }) {
     }
   }, [startCommentaryInterval, stopCommentaryInterval]);
 
+
   const fetchCommentary = useCallback(async () => {
     try {
       setIsAIWatching(true);
@@ -101,6 +131,16 @@ export default function VideoPlayer({ videoSrc }) {
         .drawImage(video, 0, 0, canvas.width, canvas.height);
       const imageData = canvas.toDataURL("image/jpeg");
 
+     // Calculate pastCommentaries inside the callback using the ref
+     let pastCommentaries = "None";
+     if (commentaryRef.current && commentaryRef.current.length > 2) {
+       const lastN = commentaryRef.current.slice(-2);
+       pastCommentaries = lastN.map(item => item.text).join(' ');
+     }
+
+     console.log(isArabicRef.current, pastCommentaries);
+
+      
       const response = await fetch("/api/commentary", {
         method: "POST",
         headers: {
@@ -110,10 +150,13 @@ export default function VideoPlayer({ videoSrc }) {
           imageData,
           width: canvas.width,
           height: canvas.height,
+          isArabic: isArabicRef.current,
+          pastCommentaries,
         }),
       });
 
       const data = await response.json();
+      console.log(data);
 
       if (data.text) {
         setCommentary((prev) => [
@@ -152,7 +195,7 @@ export default function VideoPlayer({ videoSrc }) {
   }, []);
 
   // Function to handle text-to-speech when the "Speak" button is clicked
-  const handleTextToSpeech = useCallback(() => {
+  const handleTextToSpeech = useCallback(async () => {
     if (commentary.length === 0) {
       alert("No commentary available for speech synthesis.");
       return;
@@ -160,11 +203,49 @@ export default function VideoPlayer({ videoSrc }) {
 
     const lastCommentary = commentary[commentary.length - 1].text;
 
-    const synth = window.speechSynthesis;
-    const utterance = new SpeechSynthesisUtterance(lastCommentary);
-    synth.speak(utterance);
+    console.log("LastCommentary: " +lastCommentary);
+    try {
+      const response = await fetch('/api/tts', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          lastCommentary
+        }),
+      });
+      console.log("api response:");
+      console.log(response);
+  
+      if (!response.ok) {
+        throw new Error('Failed to generate speech');
+      }
+
+      
+      
+      const audioBlob = await response.blob();
+
+      console.log("blob response:");
+      console.log(audioBlob);
+      const audioUrl = URL.createObjectURL(audioBlob);
+
+      console.log("audio url response:");
+      console.log(audioUrl);
+      // Create and play the audio
+      const audio = new Audio(audioUrl);
+      audio.play();
+
+       // Create an audio element to play the audio
+  // const audioElement = new Audio();
+  // audioElement.src = URL.createObjectURL(audio);
+  // audioElement.play();
+    } catch (error) {
+      console.error('Error:', error);
+      alert("Failed to generate speech. Please try again.");
+    }
   }, [commentary]);
 
+  
   // Chart components
 
   const TotalCommentariesChart = useCallback(({ commentaries }) => {
@@ -406,6 +487,18 @@ export default function VideoPlayer({ videoSrc }) {
           </div>
         </div>
         <div className="w-1/3 p-4 flex flex-col" style={{ maxHeight: "80vh" }}>
+        <div className="relative w-48 h-12 bg-slate-600 rounded-lg">
+      <button
+        onClick={handleToggle}
+        className={`absolute w-24 h-full rounded-lg transition-transform duration-300 ease-in-out hover:bg-green-600 ${
+          isArabic ? 'translate-x-24 bg-green-500' : 'translate-x-0 bg-green-500'
+        }`}
+      >
+        <span className="inline-block w-full text-center">
+          {isArabic ? 'العربية':'English'}
+        </span>
+      </button>
+    </div>
           <CommentarySidebar
             commentary={commentary}
             showAIMessages={showAIMessages}
@@ -457,7 +550,7 @@ export default function VideoPlayer({ videoSrc }) {
 
             <div className="analytics-card">
               <h3 className="text-xl font-semibold mb-2">
-                Warriors Win Probability
+              Perez Win Probability
               </h3>
               <GSWinProbabilityChart
                 winProbabilityData={analyticsData?.winProbabilityOverTime || []}
@@ -466,7 +559,7 @@ export default function VideoPlayer({ videoSrc }) {
 
             <div className="analytics-card">
               <h3 className="text-xl font-semibold mb-2">
-                Cavaliers Win Probability
+              Verstappen Win Probability
               </h3>
               <CLEWinProbabilityChart
                 winProbabilityData={analyticsData?.winProbabilityOverTime || []}
