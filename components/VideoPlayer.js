@@ -28,11 +28,17 @@ export default function VideoPlayer({ videoSrc }) {
   const isArabicRef = useRef(isArabic);
   const commentaryRef = useRef(commentary);
   const processingRef = useRef(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleToggle = () => {
-    setIsArabic(!isArabic);
-    console.log(isArabic);
+    setIsLoading(true);
+    setTimeout(() => {
+      setIsArabic(!isArabic);
+      setIsLoading(false);
+    }, 9000);
   };
+
+  
 
   // Keep refs updated
   useEffect(() => {
@@ -180,6 +186,8 @@ useEffect(() => {
   useEffect(() => {
     // Only set up the interval if we're not currently playing audio
     if (!isPlaying) {
+      const intervalTime = isArabic ? 5000 : 4000;
+      
       const intervalId = setInterval(async () => {
         if (commentary.length === 0) return;
         
@@ -189,12 +197,12 @@ useEffect(() => {
         } finally {
           setIsPlaying(false);
         }
-      }, 5000);
+      }, intervalTime);
   
       // Clean up the interval when the component unmounts
       return () => clearInterval(intervalId);
     }
-  }, [handleTextToSpeech, commentary, isPlaying]);
+  }, [handleTextToSpeech, commentary, isPlaying, isArabic]);
 
 
   const fetchCommentary = useCallback(async () => {
@@ -503,6 +511,16 @@ useEffect(() => {
     );
   }, []);
 
+  const Spinner = () => (
+    <div className="flex items-center justify-center">
+      <div className="w-8 h-8 border-4 border-green-200 border-t-green-500 rounded-full animate-spin"></div>
+      <span className="ml-2">
+        Switching to {isArabic ? 'English' : 'العربية'}...
+      </span>
+    </div>
+  );
+  
+
   return (
     <div className="flex flex-col min-h-screen bg-black text-neon-green font-orbitron">
       <div className="flex flex-grow">
@@ -521,10 +539,18 @@ useEffect(() => {
           </div>
         </div>
         <div className="w-1/3 p-4 flex flex-col" style={{ maxHeight: "80vh" }}>
+        {isLoading && (
+        <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-lg">
+          <div className="text-center text-white">
+            <Spinner />
+          </div>
+        </div>
+      )}
         <div className="relative w-48 h-12 bg-slate-600 rounded-lg -mt-12 mb-10">
         <button
         onClick={handleToggle}
-        className={`absolute h-12 w-24 rounded-lg bg-green-500 transition-transform duration-300 ease-in-out hover:bg-green-600  ${
+        disabled={isLoading}
+        className={`absolute h-12 w-24 rounded-lg bg-green-500 transition-transform duration-300 ease-in-out hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed ${
           isArabic ? 'translate-x-24' : 'translate-x-0'
         }`}
       >
