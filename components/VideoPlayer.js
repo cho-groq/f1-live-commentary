@@ -55,7 +55,7 @@ export default function VideoPlayer({ videoSrc }) {
     fetchLatestAnalytics();
     const intervalId = setInterval(() => {
       fetchLatestAnalytics();
-    }, 3000); // Fetch analytics every 2 seconds
+    }, 5000); // Fetch analytics every 2 seconds
 
     return () => clearInterval(intervalId);
   }, [fetchLatestAnalytics]);
@@ -73,7 +73,7 @@ export default function VideoPlayer({ videoSrc }) {
       if (!processingRef.current) {
         await fetchCommentary();
       }
-    }, 3000);
+    }, 5000);
   }
 }, []);
 // Add a stop function
@@ -163,7 +163,7 @@ useEffect(() => {
       console.log(audioUrl);
       // Create and play the audio
       const audio = new Audio(audioUrl);
-      audio.playbackRate = 2.0;
+      audio.playbackRate = 1.4;
       audio.play();
 
        // Create an audio element to play the audio
@@ -189,7 +189,7 @@ useEffect(() => {
         } finally {
           setIsPlaying(false);
         }
-      }, 1500);
+      }, 5000);
   
       // Clean up the interval when the component unmounts
       return () => clearInterval(intervalId);
