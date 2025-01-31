@@ -22,13 +22,13 @@ export default async function handler(req, res) {
       return res.status(400).json({ message: 'Prompt is required' });
     }
 
-    const speechPath = path.join(process.cwd(), 'public', 'speech');
-    if (!fs.existsSync(speechPath)) {
-      fs.mkdirSync(speechPath, { recursive: true });
-    }
+    // const speechPath = path.join(process.cwd(), 'public', 'speech');
+    // if (!fs.existsSync(speechPath)) {
+    //   fs.mkdirSync(speechPath, { recursive: true });
+    // }
 
-    const filename = `speech.mp3`;
-    const fullPath = path.join(speechPath, filename);
+    // const filename = `speech.mp3`;
+    // const fullPath = path.join(speechPath, filename);
 
     const mp3 = await openai.audio.speech.create({
       model: 'tts-1',
