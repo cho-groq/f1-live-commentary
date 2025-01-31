@@ -30,9 +30,9 @@ export default function Layout({ children }) {
 
           {/* Center */}
           <div className="flex-1 text-center">
-            <Link href="/" className="text-3xl font-bold text-white font-montserrat">
+            <p className="text-3xl font-bold text-white font-montserrat">
               F1 OnTheFlyAI
-            </Link>
+            </p>
           </div>
 
           {/* Right Side */}

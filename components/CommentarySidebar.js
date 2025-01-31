@@ -34,7 +34,7 @@ export default function CommentarySidebar({
       style={{ maxHeight: '70vh' }}
     >
       <div className="p-4 bg-black border-b border-gray-600 flex-shrink-0">
-        <h2 className="text-2xl font-bold mb-2 text-white">Live Chat</h2>
+        
         <button
           onClick={onToggleAIMessages}
           className="w-full"
@@ -75,9 +75,9 @@ export default function CommentarySidebar({
       </div>
       <form
         onSubmit={handleSubmit}
-        className="p-4 bg-black border-t border-gray-600 flex gap-2 flex-shrink-0"
+        className="p-4 bg-black border-t border-gray-600 flex gap-2 flex-shrink-0 flex-end justify-end"
       >
-        <input
+        {/* <input
           type="text"
           value={message}
           onChange={(e) => setMessage(e.target.value)}
@@ -89,14 +89,14 @@ export default function CommentarySidebar({
           className="send"
         >
           Send
-        </button>
+        </button> */}
         <button
           type="button"
           // onClick={onGenerateCommentary}
           className="generate-commentary"
           disabled={isAIWatching}
         >
-          {isAIWatching ? 'Speaking...' : 'Speak'}
+          {isAIWatching ? 'SPEAKING...' : 'SPEAK'}
         </button>
       </form>
     </div>

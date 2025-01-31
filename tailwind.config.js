@@ -8,7 +8,7 @@ module.exports = {
         orbitron: ['Orbitron', 'sans-serif'],
       },
       colors: {
-        'neon-green': '#00FF00',
+        'neon-green': 'rgb(228, 93, 67)',
         'custom-black': '#121212',
       },
     },

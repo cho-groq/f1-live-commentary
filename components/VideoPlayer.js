@@ -292,7 +292,7 @@ useEffect(() => {
   const TotalCommentariesChart = useCallback(({ commentaries }) => {
     return (
       <div className="flex items-center justify-center h-full">
-        <div className="text-9xl font-bold text-neon-green">{commentaries}</div>
+        <div className="text-9xl font-bold text-groq-orange">{commentaries}</div>
       </div>
     );
   }, []);
@@ -309,26 +309,26 @@ useEffect(() => {
           <CartesianGrid strokeDasharray="3 3" stroke="#444" />
           <XAxis
             dataKey="timestamp"
-            stroke="#00FF00"
-            tick={{ fontFamily: "Orbitron", fill: "#00FF00" }}
+            stroke="#6ec9eb"
+            tick={{ fontFamily: "Montserrat, sans-serif", fill: "rgb(228, 93, 67)" }}
           />
           <YAxis
-            stroke="#00FF00"
-            tick={{ fontFamily: "Orbitron", fill: "#00FF00" }}
+            stroke="#6ec9eb"
+            tick={{ fontFamily: "Montserrat, sans-serif", fill: "rgb(228, 93, 67" }}
           />
           <Tooltip
             contentStyle={{
               backgroundColor: "#000000",
-              borderColor: "#00FF00",
+              borderColor: "white",
             }}
-            labelStyle={{ color: "#00FF00", fontFamily: "Orbitron" }}
-            itemStyle={{ color: "#00FF00", fontFamily: "Orbitron" }}
+            labelStyle={{ color: "white", fontFamily: "Montserrat, sans-serif" }}
+            itemStyle={{ color: "white", fontFamily: "Montserrat, sans-serif" }}
           />
-          <Legend wrapperStyle={{ fontFamily: "Orbitron", color: "#00FF00" }} />
+          <Legend wrapperStyle={{ fontFamily: "Montserrat, sans-serif", color: "#6ec9eb" }} />
           <Line
             type="monotone"
             dataKey="latency"
-            stroke="#00FF00"
+            stroke="#6ec9eb"
             dot={false}
             isAnimationActive={false}
           />
@@ -349,26 +349,26 @@ useEffect(() => {
           <CartesianGrid strokeDasharray="3 3" stroke="#444" />
           <XAxis
             dataKey="timestamp"
-            stroke="#00FF00"
-            tick={{ fontFamily: "Orbitron", fill: "#00FF00" }}
+            stroke="#6ec9eb"
+            tick={{ fontFamily: "Montserrat, sans-serif", fill: "rgb(228, 93, 67" }}
           />
           <YAxis
-            stroke="#00FF00"
-            tick={{ fontFamily: "Orbitron", fill: "#00FF00" }}
+            stroke="#6ec9eb"
+            tick={{ fontFamily: "Montserrat, sans-serif", fill: "rgb(228, 93, 67" }}
           />
           <Tooltip
             contentStyle={{
               backgroundColor: "#000000",
-              borderColor: "#00FF00",
+              borderColor: "#6ec9eb",
             }}
-            labelStyle={{ color: "#00FF00", fontFamily: "Orbitron" }}
-            itemStyle={{ color: "#00FF00", fontFamily: "Orbitron" }}
+            labelStyle={{ color: "#6ec9eb", fontFamily: "Montserrat, sans-serif" }}
+            itemStyle={{ color: "#6ec9eb", fontFamily: "Montserrat, sans-serif" }}
           />
-          <Legend wrapperStyle={{ fontFamily: "Orbitron", color: "#00FF00" }} />
+          <Legend wrapperStyle={{ fontFamily: "Montserrat, sans-serif", color: "#6ec9eb" }} />
           <Line
             type="monotone"
             dataKey="length"
-            stroke="#00FF00"
+            stroke="#6ec9eb"
             dot={false}
             isAnimationActive={false}
           />
@@ -390,27 +390,27 @@ useEffect(() => {
           <CartesianGrid strokeDasharray="3 3" stroke="#444" />
           <XAxis
             dataKey="timestamp"
-            stroke="#00FF00"
-            tick={{ fontFamily: "Orbitron", fill: "#00FF00" }}
+            stroke="#6ec9eb"
+            tick={{ fontFamily: "Montserrat, sans-serif", fill: "rgb(228, 93, 67" }}
           />
           <YAxis
-            stroke="#00FF00"
-            tick={{ fontFamily: "Orbitron", fill: "#00FF00" }}
+            stroke="#6ec9eb"
+            tick={{ fontFamily: "Montserrat, sans-serif", fill: "rgb(228, 93, 67" }}
           />
           <Tooltip
             contentStyle={{
               backgroundColor: "#000000",
-              borderColor: "#00FF00",
+              borderColor: "#6ec9eb",
             }}
-            labelStyle={{ color: "#00FF00", fontFamily: "Orbitron" }}
-            itemStyle={{ color: "#00FF00", fontFamily: "Orbitron" }}
+            labelStyle={{ color: "#6ec9eb", fontFamily: "Montserrat, sans-serif" }}
+            itemStyle={{ color: "#6ec9eb", fontFamily: "Montserrat, sans-serif" }}
           />
-          <Legend wrapperStyle={{ fontFamily: "Orbitron", color: "#00FF00" }} />
+          <Legend wrapperStyle={{ fontFamily: "Montserrat, sans-serif", color: "#6ec9eb" }} />
           <Line
             type="monotone"
             dataKey="warriorsScore"
             stroke="#00FFFF" // Neon blue for Warriors
-            name="Warriors"
+            name="Perez"
             dot={false}
             isAnimationActive={false}
           />
@@ -418,7 +418,7 @@ useEffect(() => {
             type="monotone"
             dataKey="cavaliersScore"
             stroke="#FF3131" // Neon red for Cavaliers
-            name="Cavaliers"
+            name="Verstappen"
             dot={false}
             isAnimationActive={false}
           />
@@ -439,28 +439,28 @@ useEffect(() => {
           <CartesianGrid strokeDasharray="3 3" stroke="#444" />
           <XAxis
             dataKey="timestamp"
-            stroke="#00FF00"
-            tick={{ fontFamily: "Orbitron", fill: "#00FF00" }}
+            stroke="#6ec9eb"
+            tick={{ fontFamily: "Montserrat, sans-serif", fill: "rgb(228, 93, 67" }}
           />
           <YAxis
             domain={[0, 100]}
-            stroke="#00FF00"
-            tick={{ fontFamily: "Orbitron", fill: "#00FF00" }}
+            stroke="#6ec9eb"
+            tick={{ fontFamily: "Montserrat, sans-serif", fill: "rgb(228, 93, 67" }}
           />
           <Tooltip
             contentStyle={{
               backgroundColor: "#000000",
-              borderColor: "#00FF00",
+              borderColor: "#6ec9eb",
             }}
-            labelStyle={{ color: "#00FF00", fontFamily: "Orbitron" }}
-            itemStyle={{ color: "#00FF00", fontFamily: "Orbitron" }}
+            labelStyle={{ color: "#6ec9eb", fontFamily: "Montserrat, sans-serif" }}
+            itemStyle={{ color: "#6ec9eb", fontFamily: "Montserrat, sans-serif" }}
           />
-          <Legend wrapperStyle={{ fontFamily: "Orbitron", color: "#00FF00" }} />
+          <Legend wrapperStyle={{ fontFamily: "Montserrat, sans-serif", color: "#6ec9eb" }} />
           <Line
             type="monotone"
             dataKey="winProbability"
-            stroke="#00FF00"
-            name="Warriors Win Probability %"
+            stroke="#6ec9eb"
+            name="Perez Win Probability %"
             dot={false}
             isAnimationActive={false}
           />
@@ -474,6 +474,7 @@ useEffect(() => {
       timestamp: new Date(wp.timestamp).toLocaleString(),
       winProbability: 100 - wp.win_probability ?? 50,
     }));
+    
 
     return (
       <ResponsiveContainer width="100%" height="100%">
@@ -481,28 +482,28 @@ useEffect(() => {
           <CartesianGrid strokeDasharray="3 3" stroke="#444" />
           <XAxis
             dataKey="timestamp"
-            stroke="#00FF00"
-            tick={{ fontFamily: "Orbitron", fill: "#00FF00" }}
+            stroke="#6ec9eb"
+            tick={{ fontFamily: "Montserrat, sans-serif", fill: "rgb(228, 93, 67" }}
           />
           <YAxis
             domain={[0, 100]}
-            stroke="#00FF00"
-            tick={{ fontFamily: "Orbitron", fill: "#00FF00" }}
+            stroke="#6ec9eb"
+            tick={{ fontFamily: "Montserrat, sans-serif", fill: "rgb(228, 93, 67" }}
           />
           <Tooltip
             contentStyle={{
               backgroundColor: "#000000",
-              borderColor: "#00FF00",
+              borderColor: "#6ec9eb",
             }}
-            labelStyle={{ color: "#00FF00", fontFamily: "Orbitron" }}
-            itemStyle={{ color: "#00FF00", fontFamily: "Orbitron" }}
+            labelStyle={{ color: "#6ec9eb", fontFamily: "Montserrat, sans-serif" }}
+            itemStyle={{ color: "#6ec9eb", fontFamily: "Montserrat, sans-serif" }}
           />
-          <Legend wrapperStyle={{ fontFamily: "Orbitron", color: "#00FF00" }} />
+          <Legend wrapperStyle={{ fontFamily: "Montserrat, sans-serif", color: "#6ec9eb" }} />
           <Line
             type="monotone"
             dataKey="winProbability"
-            stroke="#00FF00"
-            name="Cavaliers Win Probability %"
+            stroke="#6ec9eb"
+            name="Verstappen Win Probability %"
             dot={false}
             isAnimationActive={false}
           />
@@ -513,7 +514,7 @@ useEffect(() => {
 
   const Spinner = () => (
     <div className="flex items-center justify-center">
-      <div className="w-8 h-8 border-4 border-green-200 border-t-green-500 rounded-full animate-spin"></div>
+      <div className="w-8 h-8 border-4 border-sky-200 border-t-sky-500 rounded-full animate-spin"></div>
       <span className="ml-2">
         Switching to {isArabic ? 'English' : 'العربية'}...
       </span>
@@ -522,7 +523,7 @@ useEffect(() => {
   
 
   return (
-    <div className="flex flex-col min-h-screen bg-black text-neon-green font-orbitron">
+    <div className="flex flex-col min-h-screen bg-black text-neon-green font-Montserrat, sans-serif">
       <div className="flex flex-grow">
         <div className="w-2/3 p-4 flex flex-col">
           <div className="video-container">
@@ -540,25 +541,30 @@ useEffect(() => {
         </div>
         <div className="w-1/3 p-4 flex flex-col" style={{ maxHeight: "80vh" }}>
         {isLoading && (
-        <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-lg">
+        <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-sm">
           <div className="text-center text-white">
             <Spinner />
           </div>
         </div>
       )}
-        <div className="relative w-48 h-12 bg-slate-600 rounded-lg -mt-12 mb-10">
+       <h2 className="text-2xl font-bold mb-2 text-white">Live Chat</h2>
+       
+       <div className="relative w-48 h-12 bg-slate-600 rounded-sm mb-10">
+        
         <button
         onClick={handleToggle}
         disabled={isLoading}
-        className={`absolute h-12 w-24 rounded-lg bg-green-500 transition-transform duration-300 ease-in-out hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed ${
+        className={`bg-white h-12 w-24 rounded-sm transition-transform duration-300 ease-in-out hover:bg-gray-400 disabled:opacity-50 disabled:cursor-not-allowed ${
           isArabic ? 'translate-x-24' : 'translate-x-0'
         }`}
       >
-        <span className="inline-block w-full text-center text-white">
-          {isArabic ? 'العربية' : 'English'}
+        <span className="inline-block w-full text-center text-black">
+          {isArabic ? 'العربية' : 'ENGLISH'}
         </span>
+        
       </button>
-    </div>
+        </div>
+
           <CommentarySidebar
             commentary={commentary}
             showAIMessages={showAIMessages}
@@ -578,6 +584,76 @@ useEffect(() => {
         </button>
         {showAnalytics && (
           <div className="analytics-container">
+
+<div className="analytics-card">
+            <div className="w-full max-w-4xl bg-gray-900 text-gray-200 shadow-md rounded-sm overflow-hidden">
+      <div className="bg-gray-800 px-4 py-3 font-bold text-lg">
+        F1 Drivers Championship Standings
+      </div>
+      <div className="grid grid-cols-6 font-semibold border-b border-gray-700 bg-gray-850 text-gray-300">
+        <div className="p-2 text-center">Position</div>
+        <div className="p-2 col-span-2">Driver</div>
+        <div className="p-2 col-span-2">Team</div>
+        <div className="p-2 text-center">Points</div>
+      </div>
+      <div className="grid grid-cols-6 border-b border-gray-700 hover:bg-gray-800 transition-colors">
+        <div className="p-2 text-center">1</div>
+        <div className="p-2 col-span-2">Max Verstappen</div>
+        <div className="p-2 col-span-2">Red Bull Racing</div>
+        <div className="p-2 text-center">26</div>
+      </div>
+      <div className="grid grid-cols-6 border-b border-gray-700 hover:bg-gray-800 transition-colors">
+        <div className="p-2 text-center">2</div>
+        <div className="p-2 col-span-2">Sergio Perez</div>
+        <div className="p-2 col-span-2">Red Bull Racing</div>
+        <div className="p-2 text-center">18</div>
+      </div>
+      <div className="grid grid-cols-6 border-b border-gray-700 hover:bg-gray-800 transition-colors">
+        <div className="p-2 text-center">3</div>
+        <div className="p-2 col-span-2">Carlos Sainz</div>
+        <div className="p-2 col-span-2">Ferrari</div>
+        <div className="p-2 text-center">15</div>
+      </div>
+      <div className="grid grid-cols-6 border-b border-gray-700 hover:bg-gray-800 transition-colors">
+        <div className="p-2 text-center">4</div>
+        <div className="p-2 col-span-2">Charles Leclerc</div>
+        <div className="p-2 col-span-2">Ferrari</div>
+        <div className="p-2 text-center">12</div>
+      </div>
+      <div className="grid grid-cols-6 hover:bg-gray-800 transition-colors">
+        <div className="p-2 text-center">5</div>
+        <div className="p-2 col-span-2">George Russell</div>
+        <div className="p-2 col-span-2">Mercedes</div>
+        <div className="p-2 text-center">10</div>
+      </div>
+    </div>
+              {/* <h3 className="text-xl font-semibold mb-2">Past Scores Over Time</h3>
+              <ScoresOverTimeChart
+                scoresData={analyticsData?.scoresOverTime || []}
+              /> */}
+            </div>
+
+            <div className="analytics-card">
+              <h3 className="text-xl font-semibold mb-2">
+              Perez Win Probability
+              </h3>
+              <GSWinProbabilityChart
+                winProbabilityData={analyticsData?.winProbabilityOverTime || []}
+              />
+            </div>
+
+            <div className="analytics-card">
+              <h3 className="text-xl font-semibold mb-2">
+              Verstappen Win Probability
+              </h3>
+              <CLEWinProbabilityChart
+                winProbabilityData={analyticsData?.winProbabilityOverTime || []}
+              />
+            </div>
+
+
+
+
             <div className="analytics-card">
               <h3 className="text-xl font-semibold mb-2">Total Commentaries</h3>
               <TotalCommentariesChart
@@ -601,33 +677,11 @@ useEffect(() => {
               />
             </div>
 
-            <div className="analytics-card">
-              <h3 className="text-xl font-semibold mb-2">Scores Over Time</h3>
-              <ScoresOverTimeChart
-                scoresData={analyticsData?.scoresOverTime || []}
-              />
-            </div>
-
-            <div className="analytics-card">
-              <h3 className="text-xl font-semibold mb-2">
-              Perez Win Probability
-              </h3>
-              <GSWinProbabilityChart
-                winProbabilityData={analyticsData?.winProbabilityOverTime || []}
-              />
-            </div>
-
-            <div className="analytics-card">
-              <h3 className="text-xl font-semibold mb-2">
-              Verstappen Win Probability
-              </h3>
-              <CLEWinProbabilityChart
-                winProbabilityData={analyticsData?.winProbabilityOverTime || []}
-              />
-            </div>
+            
           </div>
         )}
       </div>
+      <p className="text-white flex justify-end w-full pb-6 pr-6">Adapted from&nbsp;<a target="_blank" href="https://x.com/alexjpeng"> @alexjpeng</a>&nbsp;NBA OnTheFlyAI demo: <a  target="_blank"  href="https://github.com/apeng-singlestore/WarriorsCommentaryAPI">&nbsp;Github Project.</a></p> 
     </div>
   );
 }

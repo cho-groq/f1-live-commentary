@@ -22,7 +22,6 @@ body {
 /* Headings */
 h1,
 h2,
-h3,
 h4,
 h5,
 h6 {
@@ -41,11 +40,12 @@ a:hover {
 
 /* Buttons */
 button {
-  @apply bg-green-600 text-white px-4 py-2 rounded-md font-bold transition duration-300 ease-in-out;
+  @apply text-white px-4 py-2 rounded-sm font-bold transition duration-300 ease-in-out;
+  background-color: rgb(228, 93, 67);
 }
 
 button:hover {
-  background-color: #006a35; /* Green color on hover */
+  background-color: rgb(168, 60, 39);
 }
 
 button:disabled {
@@ -58,7 +58,7 @@ button:disabled {
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: #0fce6d; /* Neon green */
+  /* background-color: rgb(228, 93, 67); */
   border-radius: 4px;
 }
 
@@ -73,13 +73,13 @@ button:disabled {
 
 /* Analytics Card */
 .analytics-card {
-  @apply bg-black text-white rounded-lg p-4 flex flex-col;
+  @apply bg-black text-white rounded-sm p-4 flex flex-col;
   height: 400px; /* Ensure consistent height */
 }
 
 /* Live Chat Card */
 .commentary {
-  @apply bg-black rounded-lg flex flex-col h-full text-neon-green;
+  @apply bg-black rounded-sm flex flex-col h-full text-neon-green;
 }
 
 /* Video Player Styles */
@@ -89,7 +89,7 @@ button:disabled {
 
 /* AI Watching Indicator */
 .ai-watching {
-  @apply absolute top-4 right-4 bg-gray-500 bg-opacity-50 text-white px-2 py-1 rounded animate-pulse;
+  @apply absolute top-4 right-4 bg-gray-500 bg-opacity-50 text-white px-2 py-1 rounded-sm animate-pulse;
 }
 
 /* Custom Fonts */
@@ -103,5 +103,9 @@ button:disabled {
 
 /* Custom Colors */
 .text-groq-orange {
-  color: rgb(222, 93, 67);
+  color: rgb(228, 93, 67);
+}
+
+.bg-groq-orange{
+  background-color: (228, 93, 67);
 }
