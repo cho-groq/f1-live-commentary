@@ -37,7 +37,7 @@ export default async function handler(req, res) {
     });
 
     const buffer = Buffer.from(await mp3.arrayBuffer());
-    await fs.promises.writeFile(fullPath, buffer);
+    // await fs.promises.writeFile(fullPath, buffer);
 
     res.setHeader('Content-Type', 'audio/mpeg');
     res.setHeader('Content-Length', buffer.length);
