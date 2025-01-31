@@ -21,7 +21,7 @@ export default function Layout({ children }) {
           {/* Left Side */}
           <div className="flex-1">
           <Image 
-        src="/pbg.png" // Path to the image in the 'public' folder
+        src="/gl.png" // Path to the image in the 'public' folder
         alt="Description of the image"
         width={200} 
         height={200} 
@@ -30,7 +30,7 @@ export default function Layout({ children }) {
 
           {/* Center */}
           <div className="flex-1 text-center">
-            <Link href="/" className="text-3xl font-bold text-neon-green font-orbitron">
+            <Link href="/" className="text-3xl font-bold text-white font-montserrat">
               F1 OnTheFlyAI
             </Link>
           </div>

@@ -34,7 +34,7 @@ export default function CommentarySidebar({
       style={{ maxHeight: '70vh' }}
     >
       <div className="p-4 bg-black border-b border-gray-600 flex-shrink-0">
-        <h2 className="text-2xl font-bold mb-2">Live Chat</h2>
+        <h2 className="text-2xl font-bold mb-2 text-white">Live Chat</h2>
         <button
           onClick={onToggleAIMessages}
           className="w-full"

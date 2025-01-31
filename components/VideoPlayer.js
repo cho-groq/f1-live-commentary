@@ -184,8 +184,8 @@ useEffect(() => {
 
   const [isPlaying, setIsPlaying] = useState(false);
   useEffect(() => {
-    // Only set up the interval if we're not currently playing audio
-    if (!isPlaying) {
+    // Only set up the interval if we're not currently playing audio. and video is playing. else no play
+    if (!isPlaying && isVideoPlaying) {
       const intervalTime = isArabic ? 5000 : 4000;
       
       const intervalId = setInterval(async () => {
@@ -202,7 +202,7 @@ useEffect(() => {
       // Clean up the interval when the component unmounts
       return () => clearInterval(intervalId);
     }
-  }, [handleTextToSpeech, commentary, isPlaying, isArabic]);
+  }, [handleTextToSpeech, commentary, isPlaying, isArabic, isVideoPlaying]);
 
 
   const fetchCommentary = useCallback(async () => {
