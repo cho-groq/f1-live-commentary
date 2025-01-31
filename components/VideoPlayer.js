@@ -12,6 +12,8 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
+// import { Volume2, VolumeX } from "lucide-react";
+
 
 export default function VideoPlayer({ videoSrc }) {
   const videoRef = useRef(null);
@@ -29,15 +31,15 @@ export default function VideoPlayer({ videoSrc }) {
   const commentaryRef = useRef(commentary);
   const processingRef = useRef(false);
   const [isLoading, setIsLoading] = useState(false);
+  // const { isMuted, toggleMute } = useState(false);
 
-  const handleToggle = () => {
+  const handleLanguageChange = (language) => {
     setIsLoading(true);
+    setIsArabic(language === 'arabic');
     setTimeout(() => {
-      setIsArabic(!isArabic);
       setIsLoading(false);
-    }, 9000);
+    }, 10000);
   };
-
   
 
   // Keep refs updated
@@ -169,7 +171,7 @@ useEffect(() => {
       console.log(audioUrl);
       // Create and play the audio
       const audio = new Audio(audioUrl);
-      audio.playbackRate = 1.4;
+      audio.playbackRate = isArabic ? 1.2 : 1.4;
       audio.play();
 
        // Create an audio element to play the audio
@@ -512,11 +514,12 @@ useEffect(() => {
     );
   }, []);
 
+
   const Spinner = () => (
     <div className="flex items-center justify-center">
       <div className="w-8 h-8 border-4 border-sky-200 border-t-sky-500 rounded-full animate-spin"></div>
       <span className="ml-2">
-        Switching to {isArabic ? 'English' : 'العربية'}...
+        Switching to {isArabic ? 'العربية' : 'English' }...
       </span>
     </div>
   );
@@ -548,22 +551,37 @@ useEffect(() => {
         </div>
       )}
        <h2 className="text-2xl font-bold mb-2 text-white">Live Chat</h2>
-       
-       <div className="relative w-48 h-12 bg-slate-600 rounded-sm mb-10">
-        
-        <button
-        onClick={handleToggle}
+       <div className="flex flex-row">
+       <div className="flex w-48 h-12 bg-slate-600 rounded-sm mb-10">
+      <button
+        onClick={() => handleLanguageChange('english')}
         disabled={isLoading}
-        className={`bg-white h-12 w-24 rounded-sm transition-transform duration-300 ease-in-out hover:bg-gray-400 disabled:opacity-50 disabled:cursor-not-allowed ${
-          isArabic ? 'translate-x-24' : 'translate-x-0'
-        }`}
+        className={`w-36 h-12 rounded-sm transition-all duration-300 ease-in-out
+          ${!isArabic ? 'bg-white text-black' : 'bg-transparent text-white'}
+          hover:bg-gray-400 disabled:opacity-50 disabled:cursor-not-allowed`}
       >
-        <span className="inline-block w-full text-center text-black">
-          {isArabic ? 'العربية' : 'ENGLISH'}
+        <span className="inline-block w-full text-center">
+          ENGLISH
         </span>
-        
       </button>
-        </div>
+      
+      <button
+        onClick={() => handleLanguageChange('arabic')}
+        disabled={isLoading}
+        className={`w-36 h-12 rounded-sm transition-all duration-300 ease-in-out
+          ${isArabic ? 'bg-white text-black' : 'bg-transparent text-white'}
+          hover:bg-gray-400 disabled:opacity-50 disabled:cursor-not-allowed`}
+      >
+        <span className="inline-block w-full text-center">
+          العربية
+        </span>
+      </button>
+    </div>
+
+    {/* <button onClick={toggleMute} className="ml-6 flex items-center justify-center w-20 h-12 rounded-sm bg-black border-2 border-white text-white hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50 transition-colors duration-200" aria-label={isMuted ? "Unmute" : "Mute"}>
+        {isMuted ? <VolumeX className="w-7 h-7" /> : <Volume2 className="w-7 h-7" />}
+      </button> */}
+      </div>
 
           <CommentarySidebar
             commentary={commentary}
