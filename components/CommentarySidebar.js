@@ -4,9 +4,6 @@ import { useEffect, useRef, useState } from 'react';
 
 export default function CommentarySidebar({
   commentary,
-  onSendMessage,
-  showAIMessages,
-  onToggleAIMessages,
   isAIWatching,
 }) {
   const chatBoxRef = useRef(null);
@@ -35,12 +32,12 @@ export default function CommentarySidebar({
     >
       <div className="p-4 bg-black border-b border-gray-600 flex-shrink-0">
         
-        <button
+        {/* <button
           onClick={onToggleAIMessages}
           className="w-full"
         >
           {showAIMessages ? 'Hide AI Messages' : 'Show AI Messages'}
-        </button>
+        </button> */}
       </div>
       <div
         className="flex-grow overflow-y-auto p-4 bg-black"
@@ -52,7 +49,7 @@ export default function CommentarySidebar({
             if (index === commentary.length - 1) {
               return null;
             }
-            if (showAIMessages || comment.type !== 'ai') {
+            if (true) {
               return (
                 <div
                   key={index}
