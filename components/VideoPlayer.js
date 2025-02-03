@@ -12,7 +12,8 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
-// import { Volume2, VolumeX } from "lucide-react";
+import MicChatButton from "./MicChatButton";
+import { Volume2, VolumeX } from "lucide-react";
 
 
 export default function VideoPlayer({ videoSrc }) {
@@ -31,7 +32,8 @@ export default function VideoPlayer({ videoSrc }) {
   const commentaryRef = useRef(commentary);
   const processingRef = useRef(false);
   const [isLoading, setIsLoading] = useState(false);
-  // const { isMuted, toggleMute } = useState(false);
+  const [isMuted, toggleMute] = useState(false);
+  const [hideMessages, setHideMessages] = useState(false);
 
   const handleLanguageChange = (language) => {
     setIsLoading(true);
@@ -40,6 +42,25 @@ export default function VideoPlayer({ videoSrc }) {
       setIsLoading(false);
     }, 10000);
   };
+
+  const handleToggleMute = () => {
+    toggleMute(!isMuted);
+  // if we are muting then need to forloop mute all audio immediately
+  if (isMuted == true){
+    const audioElements = document.querySelectorAll('audio');
+    audioElements.forEach(audio => {
+      audio.muted = true;
+    });
+  }
+
+  };
+
+  const getIsMuted = () => {
+    return isMuted;
+  };
+  
+
+
   
 
   // Keep refs updated
@@ -106,11 +127,13 @@ useEffect(() => {
     if (video) {
       const handlePlay = () => {
         setIsVideoPlaying(true);
+        toggleMute(false);
         startCommentaryInterval();
       };
 
       const handlePause = () => {
         setIsVideoPlaying(false);
+        toggleMute(true);
         stopCommentaryInterval();
       };
 
@@ -172,17 +195,44 @@ useEffect(() => {
       // Create and play the audio
       const audio = new Audio(audioUrl);
       audio.playbackRate = isArabic ? 1.2 : 1.4;
-      audio.play();
+      if (getIsMuted()) {
+        audio.muted = true;
+      }
 
-       // Create an audio element to play the audio
-  // const audioElement = new Audio();
-  // audioElement.src = URL.createObjectURL(audio);
-  // audioElement.play();
-    } catch (error) {
-      console.error('Error:', error);
-      alert("Failed to generate speech. Please try again.");
-    }
-  }, [commentary]);
+       // Add event listener to check mute status before playing
+    const checkMuteBeforePlaying = () => {
+      // in hopes of getting the global changed version of the variable
+      if (getIsMuted() == false) {
+        audio.play(); // it's right after this line here that we need to make it stop playing
+      }
+      audio.removeEventListener('canplaythrough', checkMuteBeforePlaying);
+    };
+
+    audio.addEventListener('canplaythrough', checkMuteBeforePlaying);
+
+    // Optional: Add a method to stop audio if muted mid-playback
+    // in hopes of getting the global changed version of the variable
+    const stopIfMuted = () => {
+      if (getIsMuted() == true) {
+        audio.muted = true;
+        audio.pause();
+      }
+    };
+
+    audio.addEventListener('playing', () => {
+      // Periodically check if muted during playback
+      const muteCheckInterval = setInterval(stopIfMuted, 250);
+      
+      audio.onended = () => {
+        clearInterval(muteCheckInterval);
+      };
+    });
+
+  } catch (error) {
+    console.error('Error:', error);
+    alert("Failed to generate speech. Please try again.");
+  }
+}, [commentary, isArabic, isMuted]);
 
   const [isPlaying, setIsPlaying] = useState(false);
   useEffect(() => {
@@ -516,42 +566,18 @@ useEffect(() => {
 
 
   const Spinner = () => (
-    <div className="flex items-center justify-center">
-      <div className="w-8 h-8 border-4 border-sky-200 border-t-sky-500 rounded-full animate-spin"></div>
-      <span className="ml-2">
+    <div className="flex items-center justify-center pointer-events-none">
+      <div className="w-8 h-8 border-4 border-sky-200 border-t-sky-500 rounded-full animate-spin pointer-events-none point"></div>
+      <span className="ml-2 pointer-events-none">
         Switching to {isArabic ? 'العربية' : 'English' }...
       </span>
     </div>
   );
-  
+
 
   return (
     <div className="flex flex-col min-h-screen bg-black text-neon-green font-Montserrat, sans-serif">
-      <div className="flex flex-grow">
-        <div className="w-2/3 p-4 flex flex-col">
-          <div className="video-container">
-            <video
-            muted
-              ref={videoRef}
-              src={videoSrc}
-              controls
-              crossOrigin="anonymous"
-              className="w-full h-auto object-contain"
-            />
-            {error && <p className="text-red-500 mt-2">{error}</p>}
-            {isAIWatching && <div className="ai-watching">AI is watching</div>}
-          </div>
-        </div>
-        <div className="w-1/3 p-4 flex flex-col" style={{ maxHeight: "80vh" }}>
-        {isLoading && (
-        <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-sm">
-          <div className="text-center text-white">
-            <Spinner />
-          </div>
-        </div>
-      )}
-       <h2 className="text-2xl font-bold mb-2 text-white">Live Chat</h2>
-       <div className="flex flex-row">
+      <div className="flex flex-row justify-end -mt-16">
        <div className="flex w-48 h-12 bg-slate-600 rounded-sm mb-10">
       <button
         onClick={() => handleLanguageChange('english')}
@@ -578,10 +604,47 @@ useEffect(() => {
       </button>
     </div>
 
-    {/* <button onClick={toggleMute} className="ml-6 flex items-center justify-center w-20 h-12 rounded-sm bg-black border-2 border-white text-white hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50 transition-colors duration-200" aria-label={isMuted ? "Unmute" : "Mute"}>
+        <button
+          onClick={() => setHideMessages(!hideMessages)}
+          className="ml-6 w-36 h-12 border-2 border-white text-groq-orange bg-transparent rounded-sm hover:bg-gray-800 transition-all"
+
+        >
+          {hideMessages ? 'Show Chat' : 'Hide Chat'}
+        </button>
+
+
+    <button onClick={handleToggleMute} className="ml-6 flex items-center justify-center w-20 h-12 rounded-sm bg-black border-2 border-white text-white hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50 transition-colors duration-200" aria-label={isMuted ? "Unmute" : "Mute"}>
         {isMuted ? <VolumeX className="w-7 h-7" /> : <Volume2 className="w-7 h-7" />}
-      </button> */}
+      </button>
       </div>
+
+      <div className="flex flex-grow">
+        {/* hideMessages w full, and the other one is gone */}
+        <div className={`p-4 flex flex-col transition-all duration-300 ${hideMessages ? 'w-full px-12' : 'w-2/3'}`}>
+          <div className="video-container">
+            <video
+            muted
+              ref={videoRef}
+              src={videoSrc}
+              controls
+              crossOrigin="anonymous"
+              className="w-full h-auto object-contain"
+            />
+            {error && <p className="text-red-500 mt-2">{error}</p>}
+            {isAIWatching && <div className="ai-watching">AI is watching</div>}
+          </div>
+        </div>
+        {!hideMessages && (
+  <div className="w-1/3 p-4 flex flex-col" style={{ maxHeight: "80vh" }}>
+        {isLoading && (
+        <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-sm pointer-events-none">
+          <div className="text-center text-white pointer-events-none">
+            <Spinner />
+          </div>
+        </div>
+      )}
+       <h2 className="text-2xl font-bold mb-2 text-white">Live Chat</h2>
+       
 
           <CommentarySidebar
             commentary={commentary}
@@ -590,16 +653,19 @@ useEffect(() => {
             // onGenerateCommentary={handleTextToSpeech}
             isAIWatching={isAIWatching}
             onSendMessage={onSendMessage}
+
           />
-        </div>
+        </div>)}
       </div>
-      <div className="bg-black p-4">
+         <div className="bg-black p-4">
         <button
           onClick={() => setShowAnalytics(!showAnalytics)}
           className="mb-4"
         >
           {showAnalytics ? "Hide Analytics" : "Show Analytics"}
         </button>
+        <MicChatButton />
+   
         {showAnalytics && (
           <div className="analytics-container">
 
