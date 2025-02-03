@@ -12,7 +12,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
-// import { Volume2, VolumeX } from "lucide-react";
+import { Volume2, VolumeX } from "lucide-react";
 
 
 export default function VideoPlayer({ videoSrc }) {
@@ -31,7 +31,7 @@ export default function VideoPlayer({ videoSrc }) {
   const commentaryRef = useRef(commentary);
   const processingRef = useRef(false);
   const [isLoading, setIsLoading] = useState(false);
-  // const { isMuted, toggleMute } = useState(false);
+  const [isMuted, toggleMute] = useState(false);
 
   const handleLanguageChange = (language) => {
     setIsLoading(true);
@@ -40,6 +40,24 @@ export default function VideoPlayer({ videoSrc }) {
       setIsLoading(false);
     }, 10000);
   };
+
+  const handleToggleMute = () => {
+  // if we are muting then need to forloop mute all audio immediately
+  if (isMuted == true){
+    const audioElements = document.querySelectorAll('audio');
+    audioElements.forEach(audio => {
+      audio.muted = true;
+    });
+  }
+  toggleMute(!isMuted);
+  };
+
+  const getIsMuted = () => {
+    return isMuted;
+  };
+  
+
+
   
 
   // Keep refs updated
@@ -106,11 +124,13 @@ useEffect(() => {
     if (video) {
       const handlePlay = () => {
         setIsVideoPlaying(true);
+        toggleMute(false);
         startCommentaryInterval();
       };
 
       const handlePause = () => {
         setIsVideoPlaying(false);
+        toggleMute(true);
         stopCommentaryInterval();
       };
 
@@ -172,17 +192,41 @@ useEffect(() => {
       // Create and play the audio
       const audio = new Audio(audioUrl);
       audio.playbackRate = isArabic ? 1.2 : 1.4;
-      audio.play();
 
-       // Create an audio element to play the audio
-  // const audioElement = new Audio();
-  // audioElement.src = URL.createObjectURL(audio);
-  // audioElement.play();
-    } catch (error) {
-      console.error('Error:', error);
-      alert("Failed to generate speech. Please try again.");
-    }
-  }, [commentary]);
+       // Add event listener to check mute status before playing
+    const checkMuteBeforePlaying = () => {
+      // in hopes of getting the global changed version of the variable
+      if (getIsMuted() == false) {
+        audio.play();
+      }
+      audio.removeEventListener('canplaythrough', checkMuteBeforePlaying);
+    };
+
+    audio.addEventListener('canplaythrough', checkMuteBeforePlaying);
+
+    // Optional: Add a method to stop audio if muted mid-playback
+    // in hopes of getting the global changed version of the variable
+    const stopIfMuted = () => {
+      if (getIsMuted() == true) {
+        audio.muted = true;
+        audio.pause();
+      }
+    };
+
+    audio.addEventListener('playing', () => {
+      // Periodically check if muted during playback
+      const muteCheckInterval = setInterval(stopIfMuted, 250);
+      
+      audio.onended = () => {
+        clearInterval(muteCheckInterval);
+      };
+    });
+
+  } catch (error) {
+    console.error('Error:', error);
+    alert("Failed to generate speech. Please try again.");
+  }
+}, [commentary, isArabic]);
 
   const [isPlaying, setIsPlaying] = useState(false);
   useEffect(() => {
@@ -523,7 +567,7 @@ useEffect(() => {
       </span>
     </div>
   );
-  
+
 
   return (
     <div className="flex flex-col min-h-screen bg-black text-neon-green font-Montserrat, sans-serif">
@@ -578,9 +622,9 @@ useEffect(() => {
       </button>
     </div>
 
-    {/* <button onClick={toggleMute} className="ml-6 flex items-center justify-center w-20 h-12 rounded-sm bg-black border-2 border-white text-white hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50 transition-colors duration-200" aria-label={isMuted ? "Unmute" : "Mute"}>
+    <button onClick={handleToggleMute} className="ml-6 flex items-center justify-center w-20 h-12 rounded-sm bg-black border-2 border-white text-white hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50 transition-colors duration-200" aria-label={isMuted ? "Unmute" : "Mute"}>
         {isMuted ? <VolumeX className="w-7 h-7" /> : <Volume2 className="w-7 h-7" />}
-      </button> */}
+      </button>
       </div>
 
           <CommentarySidebar
@@ -593,6 +637,7 @@ useEffect(() => {
           />
         </div>
       </div>
+      <button type="button" className="generate-commentary">Talk with the Commentator</button>
       <div className="bg-black p-4">
         <button
           onClick={() => setShowAnalytics(!showAnalytics)}
