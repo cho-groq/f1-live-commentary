@@ -1,4 +1,5 @@
 import fs from "fs";
+import formidable from 'formidable';
 import Groq from "groq-sdk";
 
 // Initialize the Groq client
@@ -6,7 +7,13 @@ const groq = new Groq({
   apiKey: process.env.GROQ_API_KEY,
 });
 
-export async function handler(req, res) {
+export const config = {
+  api: {
+    bodyParser: false,  // Important: Disable default body parsing
+  },
+};
+
+export default async function handler(req, res) {
 
   console.log("this is the req: "+req);
   if (req.method !== 'POST') {
@@ -18,14 +25,28 @@ export async function handler(req, res) {
     // it should be inside the req body?
     console.log("REQ body: " + req.body);
 
-    const formData = await req.formData();
-    console.log(formData);
-    const audioFile = formData.get('audio');
+    const form = new formidable.IncomingForm();
+
+  form.parse(req, async (err, fields, files) => {
+    if (err) {
+      console.error("Error parsing form data:", err);
+      return res.status(500).json({ error: 'Error processing file' });
+    }
+
+    console.log("Fields:", fields); // Other form values
+    console.log("Files:", files);   // Uploaded file
+
+    // Read the file
+    const audioFile = files.audio;
+
+    // const formData = await req.formData();
+    // console.log(formData);
+    // const audioFile = formData.get('audio');
     if (!audioFile) {
       return res.status(400).json({ message: 'audioFile is required' });
     }
     console.log("type of audiofile is: " + typeof audioFile);
-    const arrayBuffer = await audioFile.arrayBuffer();
+    const arrayBuffer = await audioBlob.arrayBuffer();
     const buffer1 = Buffer.from(arrayBuffer);
 
     const file = new File([buffer1], 'audio.webm', { type: 'audio/webm' });
@@ -54,6 +75,7 @@ export async function handler(req, res) {
     res.setHeader('Content-Type', 'audio/mpeg');
     res.setHeader('Content-Length', buffer.length);
     res.status(200).send(buffer);
+     });
   } catch (error) {
     console.error('Error generating speech:', error);
     res.status(500).json({ message: 'Error generating speech' });
