@@ -36,7 +36,8 @@ export default function MicChatButton(){
 
 					const data = await response.json();
 					if (response.ok) {
-						onTranscription(data.transcription);
+                        // play the conversational audio message back
+                        console.log("Yeah it works")
 					} else {
 						console.error("Transcription failed:", data.error);
 					}
