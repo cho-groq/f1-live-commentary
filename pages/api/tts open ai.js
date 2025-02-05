@@ -1,9 +1,9 @@
 import fs from "fs";
 import path from "path";
-import Groq from "groq-sdk";
+import OpenAI from "openai";
 
-const groq = new Groq({
-  apiKey: process.env.GROQ_API_KEY,
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY
 });
 
 export default async function handler(req, res) {
@@ -29,21 +29,13 @@ export default async function handler(req, res) {
 
     // const filename = `speech.mp3`;
     // const fullPath = path.join(speechPath, filename);
-    const groq = new Groq();
-      const chatCompletion = await groq.chat.completions.create({
-        "messages": [],
-        "model": "play-tts",
-        "temperature": 1,
-        "max_completion_tokens": 1024,
-        "top_p": 1,
-        "stream": true,
-        "stop": null
-      });
 
-      for await (const chunk of chatCompletion) {
-        process.stdout.write(chunk.choices[0]?.delta?.content || '');
-      }
-      //how to fit the above into output?
+    const mp3 = await openai.audio.speech.create({
+      model: 'tts-1',
+      voice: 'ash',
+      input: prompt,
+    });
+
     const buffer = Buffer.from(await mp3.arrayBuffer());
     // await fs.promises.writeFile(fullPath, buffer);
 

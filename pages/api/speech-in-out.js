@@ -1,27 +1,149 @@
 import fs from "fs";
 import {IncomingForm} from 'formidable';
 import Groq from "groq-sdk";
+import os from "os";
+import path from "path";
 
 // Initialize the Groq client
 const groq = new Groq({
   apiKey: process.env.GROQ_API_KEY,
 });
 
+// async function handleFormParse(req) {
+//   return new Promise((resolve, reject) => {
+//     const form = new IncomingForm({
+//       uploadDir: os.tmpdir(), // Configure upload directory
+//     });
+//     console.log("hello")
+ 
+//     form.parse(req, (err, fields, files) => {
+//       if (err) {
+//         reject(err);
+//       } else {
+//         console.log("good")
+//         resolve({ fields, files });
+//       }
+//     });
+//   });
+//  }
+
+// async function handleFormParse(req) {
+//   return new Promise((resolve, reject) => {
+//     const form = new IncomingForm({
+//       uploadDir: os.tmpdir(), // Temporary upload directory
+//     });
+
+//     form.parse(req, async (err, fields, files) => {
+//       if (err) {
+//         return reject(err);
+//       }
+
+//       if (!files.audio) {
+//         return reject(new Error("No file uploaded"));
+//       }
+
+//       const uploadedFile = files.audio; // Adjust based on structure here probably audio retrieval . 
+
+//       try {
+//         const fileBuffer = await fs.readFile(uploadedFile.filepath);
+//         const fileBlob = new Blob([fileBuffer], { type: uploadedFile.mimetype });
+
+//         resolve({ fields, file: fileBlob });
+//       } catch (error) {
+//         reject(error);
+//       }
+//     });
+//   });
+// }
+
 async function handleFormParse(req) {
   return new Promise((resolve, reject) => {
-    const form = new IncomingForm();
-    console.log("hello")
- 
-    form.parse(req, (err, fields, files) => {
+    const form = new IncomingForm({
+      uploadDir: os.tmpdir(), // Temporary upload directory
+      keepExtensions: true, // Keep file extensions
+    });
+    // consol
+    form.parse(req, async (err, fields, files) => {
       if (err) {
-        reject(err);
-      } else {
-        console.log("good")
-        resolve({ fields, files });
+        return reject(err);
+      }
+
+      if (!files.audio) {
+        return reject(new Error("No file uploaded"));
+      }
+
+      const uploadedFile = files.audio[0]; // Adjust based on structure
+
+      try {
+        const fileBuffer = fs.readFileSync(uploadedFile.filepath);
+
+        resolve({
+          fields,
+          file: {
+            buffer: fileBuffer, // Buffer containing file data
+            originalFilename: uploadedFile.originalFilename,
+            mimetype: uploadedFile.mimetype,
+            size: uploadedFile.size,
+          },
+        });
+      } catch (error) {
+        reject(error);
       }
     });
   });
- }
+}
+
+//  async function whisper(audioFile){
+
+//   // audioFile should now be a single file object, not an array
+//   if (!audioFile.filepath) {
+//     throw new Error('Invalid audio file object: missing filepath');
+//   }
+
+//   if (!fs.existsSync(audioFile.filepath)) {
+//     throw new Error(`Audio file not found at path: ${audioFile.filepath}`);
+//   }
+
+//   const transcription = await groq.audio.transcriptions.create({
+//     file: fs.createReadStream(audioFile.filepath), // Required path to audio file - replace with your audio file!
+//     model: "whisper-large-v3-turbo", // Required model to use for transcription
+//     prompt: "Saudi Arabian F1 Grand Prix at the Jeddah Corniche Circuit. Driver examples: Verstappen, Leclerc, Perez, Hamilton.", // Optional
+//     response_format: "text", // Optional
+//     language: "en", // Optional
+//     temperature: 0.0, // Optional
+//   });
+
+//   // Log the transcribed text
+//   return transcription;
+//  }
+
+async function whisper(audioFile) {
+  if (!audioFile.buffer) {
+    throw new Error('Invalid audio file object: missing buffer');
+  }
+
+  // Create a temporary file path
+  const tempFilePath = path.join(os.tmpdir(), `audio_${Date.now()}.mp3`);
+  console.log("before write");
+  // Write the buffer to a temporary file
+  fs.writeFileSync(tempFilePath, audioFile.buffer);
+  console.log("after write");
+  try {
+    const transcription = await groq.audio.transcriptions.create({
+      file: fs.createReadStream(tempFilePath), // Pass the temporary file path
+      model: "whisper-large-v3-turbo",
+      prompt: "Saudi Arabian F1 Grand Prix at the Jeddah Corniche Circuit. Driver examples: Verstappen, Leclerc, Perez, Hamilton.",
+      response_format: "text",
+      language: "en",
+      temperature: 0.0,
+    });
+
+    return transcription;
+  } finally {
+    // Cleanup: Delete the temporary file after processing
+    await fs.unlinkSync(tempFilePath);
+  }
+}
 
 export const config = {
   api: {
@@ -39,10 +161,13 @@ export default async function handler(req, res) {
   try {
     console.log("REQ KEYS: " + Object.keys(req));
     console.log("REQ VALUES: " + Object.values(req));
-    const { fields, files } = await handleFormParse(req);
+    const { file } = await handleFormParse(req);
+    // console.log('Files object:', JSON.stringify(files, null, 2));
+    console.log("file: " + file);
+    // console.log("fields: " + fields);
+    // console.log("files: " +files);
 
-    console.log(fields, files);
-  // this syntax might have worked
+    // this syntax works
     // const form = new IncomingForm();
     // form.parse(req, (err, fields, files) => {
     //   if (err) {
@@ -52,14 +177,61 @@ export default async function handler(req, res) {
     //   console.log(err, fields, files);
 
       // how to grab the audio file called audio
-      const audioFile = files.audio;
-      if (!audioFile) {
-        return res.status(400).json({ message: 'Audio file is required' });
-      }
-      console.log(audioFile);
+      // const audioFile = files.audio?.[0];
+
+      // console.log('Audio file full details:', JSON.stringify(audioFile, null, 2));
+      // if (!audioFile) {
+      //   return res.status(400).json({ message: 'Audio file is required' });
+      // }
+
+      // console.log('Processing audio file:', {
+      //   size: audioFile.size,
+      //   filepath: audioFile.filepath,
+      //   mimetype: audioFile.mimetype,
+      //   filename: audioFile.newFilename
+      // });
+
+      // console.log("audio file: "+ audioFile);
+      // console.log("type of audiofile is: " + typeof audioFile);
+      // console.log("AUDIO KEYS: " + Object.keys(audioFile));
+
+      // console.log("path: " + audioFile.filepath);
+
+      // const arrayBuffer = await audioFile.arrayBuffer();
+      // const buffer1 = Buffer.from(arrayBuffer);
+      
+      // const file = new File([buffer1], 'audio.webm', { type: 'audio/webm' });
+      // console.log("type of file is: " + typeof file);
+      // whispr parse
+      let transcription = await whisper(file);
+      console.log(transcription);
+
+      // text to text conversational analyst. copied and pasted from other one
+      // const chatCompletion2 = await groq.chat.completions.create({
+      //   messages: [
+        
+      //     {
+      //       role: "system",
+      //       content: 'You are a F1 sports conversational analyst for the Saudi Arabian Grand Prix. Be succinct and expressive. Answer my question.',
+      //     },
+      //     {
+      //       role: "user",
+      //       content: prompt2,
+      //     },
+      //   ],
+    
+      //   model: "llama-3.1-8b-instant",
+      //   max_tokens: 100,
+      //   temperature: 1.0,
+      //   stop: null,
+      //   stream: false,
+      // });
+
+      // announcerCommentary = chatCompletion2.choices[0]?.message?.content;
+      // console.log("Talker Commentary: " + announcerCommentary);
 
       // make openai TTS call
-
+      // just copy and paste it over, or wait for groq chat one good
 
     
  
