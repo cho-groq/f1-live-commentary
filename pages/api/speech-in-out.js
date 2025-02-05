@@ -151,6 +151,14 @@ export const config = {
   },
 };
 
+const buildRequestHeaders = () => {
+  console.log("key: "+process.env.GROQ_API_KEY);
+  return {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${process.env.GROQ_API_KEY}`, // Replace with actual authentication if needed
+  };
+};
+
 export default async function handler(req, res) {
 
   console.log("this is the req: "+req);
@@ -232,13 +240,13 @@ export default async function handler(req, res) {
 
       let result = chatCompletion1.choices[0]?.message?.content;
       const resultObj = JSON.parse(result); // Parse the string into a JSON object
-
-      console.log("checkpoint: " + resultObj);
+      // console.log()
+      console.log("checkpoint: " + resultObj.isText);
       if (resultObj.isText !== "yes"){
         return res.status(400).json({ error: "Please try again and speak clearly." });
       }
       
-
+      console.log("made it to here");
     
       // text to text conversational analyst. copied and pasted from other one
       const chatCompletion2 = await groq.chat.completions.create({
@@ -263,36 +271,72 @@ export default async function handler(req, res) {
 
       let announcerCommentary = chatCompletion2.choices[0]?.message?.content;
       console.log("Talker Response: " + announcerCommentary);
-      
-      // Accumulate audio data?
-      const audioChunks = [];
-
-      // make groq TTS call
-      const chatCompletion = await groq.chat.completions.create({
-        "messages": [announcerCommentary],
-        "model": "play-tts",
-        "temperature": 1,
-        "max_completion_tokens": 1024,
-        "top_p": 1,
-        "stream": true,
-        "stop": null
+      try {
+        // make groq TTS call
+      const AUDIO_SPEECH_URL = "https://api.groq.com/openai/v1/audio/speech";
+      const response = await fetch(AUDIO_SPEECH_URL, {
+        method: "POST",
+        headers: buildRequestHeaders(),
+        body: JSON.stringify({
+          model: "play-tts",
+          input: announcerCommentary,
+          voice: "Mary", // Change as needed
+        }),
       });
-    
-      // not sure how to change this into header audio back out
-      for await (const chunk of chatCompletion) {
-        if (chunk.choices[0]?.delta?.content) {
-          audioChunks.push(Buffer.from(chunk.choices[0].delta.content, 'binary'));
-        }
+      console.log("testtesttest");
+  if (!response.ok) {
+    console.log("response was not ok")
+    let variable = await response.text();
+    console.log("this is the reponse.text: "+variable);
+        return res.status(response.status).json({ error: "TTS API Error", details: variable});
       }
-      const audioBuffer = Buffer.concat(audioChunks);
+      console.log("response is ok")
+  
+      const audioBuffer = await response.arrayBuffer();
+  
+      // Set headers for audio file response
+      res.setHeader("Content-Type", "audio/mpeg");
+      res.setHeader("Content-Length", audioBuffer.byteLength);
+      
+      res.status(200).send(Buffer.from(audioBuffer));
+      console.log("made it all the way")
+      } catch (error) {
+        console.log("error messagegegege:" )
+        console.log(error)
+        res.status(500).json({ error: error.message });
+      }
+      
 
-      // Set audio headers and send response
-      res.setHeader('Content-Type', 'audio/mpeg');
-      res.setHeader('Content-Length', audioBuffer.length);
-      res.status(200).send(audioBuffer);
-     res.status(200).json({ 
-       message: 'Audio received', 
-     });
+      // const chatCompletion = await groq.chat.completions.create({
+      //   "messages": [announcerCommentary],
+      //   "model": "play-tts",
+      //   "temperature": 1,
+      //   "max_completion_tokens": 1024,
+      //   "top_p": 1,
+      //   "stream": true,
+      //   "stop": null
+      // });
+
+      // const buffer = Buffer.from(await chatCompletion.arrayBuffer());
+      
+      // what is returned from it? nothing is printed out after it
+      // not sure how to change this into header audio back out
+      // for await (const chunk of chatCompletion) {
+      //   if (chunk.choices[0]?.delta?.content || '') {
+      //     console.log("chunk: "+chunk);
+      //     audioChunks.push(Buffer.from(chunk.choices[0].delta.content, 'binary'));
+      //   }
+      // }
+      // // const audioBuffer = Buffer.concat(audioChunks);
+      // console.log("audiobuffer: "+audioBuffer);
+      // // buildRequestHeaders
+      // // Set audio headers and send response
+      // res.setHeader('Content-Type', 'audio/mpeg');
+      // res.setHeader('Content-Length', audioBuffer.length);
+      // res.status(200).send(audioBuffer);
+    //  res.status(200).json({ 
+    //    message: 'Audio received', 
+    //  });
  } catch (error) {
   res.status(500).json({ error: error.message });
 }

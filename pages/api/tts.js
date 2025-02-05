@@ -6,6 +6,14 @@ const groq = new Groq({
   apiKey: process.env.GROQ_API_KEY,
 });
 
+const buildRequestHeaders = () => {
+  console.log("key: "+process.env.GROQ_API_KEY);
+  return {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${process.env.GROQ_API_KEY}`, // Replace with actual authentication if needed
+  };
+};
+
 export default async function handler(req, res) {
   // console.log(req);
   if (req.method !== 'POST') {
@@ -29,27 +37,29 @@ export default async function handler(req, res) {
 
     // const filename = `speech.mp3`;
     // const fullPath = path.join(speechPath, filename);
-    const groq = new Groq();
-      const chatCompletion = await groq.chat.completions.create({
-        "messages": [],
-        "model": "play-tts",
-        "temperature": 1,
-        "max_completion_tokens": 1024,
-        "top_p": 1,
-        "stream": true,
-        "stop": null
+    const AUDIO_SPEECH_URL = "https://api.groq.com/openai/v1/audio/speech";
+      const response = await fetch(AUDIO_SPEECH_URL, {
+        method: "POST",
+        headers: buildRequestHeaders(),
+        body: JSON.stringify({
+          model: "play-tts",
+          input: prompt,
+          voice: "Mary", // Change as needed
+        }),
       });
 
-      for await (const chunk of chatCompletion) {
-        process.stdout.write(chunk.choices[0]?.delta?.content || '');
-      }
+      const audioBuffer = await response.arrayBuffer();
       //how to fit the above into output?
-    const buffer = Buffer.from(await mp3.arrayBuffer());
+    // const buffer = Buffer.from(await mp3.arrayBuffer());
     // await fs.promises.writeFile(fullPath, buffer);
 
-    res.setHeader('Content-Type', 'audio/mpeg');
-    res.setHeader('Content-Length', buffer.length);
-    res.status(200).send(buffer);
+    // res.setHeader('Content-Type', 'audio/mpeg');
+    // res.setHeader('Content-Length', buffer.length);
+    // res.status(200).send(buffer);
+    res.setHeader("Content-Type", "audio/mpeg");
+      res.setHeader("Content-Length", audioBuffer.byteLength);
+      
+      res.status(200).send(Buffer.from(audioBuffer));
   } catch (error) {
     console.error('Error generating speech:', error);
     res.status(500).json({ message: 'Error generating speech' });
