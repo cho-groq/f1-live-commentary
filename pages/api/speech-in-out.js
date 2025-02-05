@@ -132,7 +132,7 @@ async function whisper(audioFile) {
     const transcription = await groq.audio.transcriptions.create({
       file: fs.createReadStream(tempFilePath), // Pass the temporary file path
       model: "whisper-large-v3-turbo",
-      prompt: "Saudi Arabian F1 Grand Prix at the Jeddah Corniche Circuit. Driver examples: Verstappen, Leclerc, Perez, Hamilton.",
+      prompt: "Saudi Arabian F1 Grand Prix at the Jeddah Corniche Circuit. Drivers may include: Verstappen, Leclerc, Perez, Hamilton.",
       response_format: "text",
       language: "en",
       temperature: 0.0,
@@ -204,38 +204,92 @@ export default async function handler(req, res) {
       // console.log("type of file is: " + typeof file);
       // whispr parse
       let transcription = await whisper(file);
-      console.log(transcription);
+      console.log("input: " + transcription);
+      console.log(typeof transcription);
 
-      // text to text conversational analyst. copied and pasted from other one
-      // const chatCompletion2 = await groq.chat.completions.create({
-      //   messages: [
+
+      // if not coherent words e.g. didn't mean to ask question. break and return here before getting to response.
+      const chatCompletion1 = await groq.chat.completions.create({
+        messages: [
         
-      //     {
-      //       role: "system",
-      //       content: 'You are a F1 sports conversational analyst for the Saudi Arabian Grand Prix. Be succinct and expressive. Answer my question.',
-      //     },
-      //     {
-      //       role: "user",
-      //       content: prompt2,
-      //     },
-      //   ],
+          {
+            role: "system",
+            content: 'Given the transcription, return a single JSON key with a boolean value whether it is coherent text or not. JSON schema must be: "isText": { "yes" || "no"}',
+          },
+          {
+            role: "user",
+            content: transcription,
+          },
+        ],
     
-      //   model: "llama-3.1-8b-instant",
-      //   max_tokens: 100,
-      //   temperature: 1.0,
-      //   stop: null,
-      //   stream: false,
-      // });
+        model: "llama-3.1-8b-instant",
+        max_tokens: 100,
+        temperature: 0.1,
+        stop: null,
+        response_format: { type: "json_object" },
+        stream: false,
+      });
 
-      // announcerCommentary = chatCompletion2.choices[0]?.message?.content;
-      // console.log("Talker Commentary: " + announcerCommentary);
+      let result = chatCompletion1.choices[0]?.message?.content;
+      const resultObj = JSON.parse(result); // Parse the string into a JSON object
 
-      // make openai TTS call
-      // just copy and paste it over, or wait for groq chat one good
+      console.log("checkpoint: " + resultObj);
+      if (resultObj.isText !== "yes"){
+        return res.status(400).json({ error: "Please try again and speak clearly." });
+      }
+      
 
     
- 
-     // Now you have the audio in memory as a buffer
+      // text to text conversational analyst. copied and pasted from other one
+      const chatCompletion2 = await groq.chat.completions.create({
+        messages: [
+        
+          {
+            role: "system",
+            content: 'You are a F1 sports conversational analyst for the Saudi Arabian Grand Prix. The driver starting order is: 1. Verstappen 2. Leclerc 3. Perez 4. Alonso 5. Piastri 6. Norris 7. Russell 8. Hamilton. Answer my question in less than 20 words.',
+          },
+          {
+            role: "user",
+            content: transcription,
+          },
+        ],
+    
+        model: "llama-3.1-8b-instant",
+        max_tokens: 150,
+        temperature: 0.2,
+        stop: null,
+        stream: false,
+      });
+
+      let announcerCommentary = chatCompletion2.choices[0]?.message?.content;
+      console.log("Talker Response: " + announcerCommentary);
+      
+      // Accumulate audio data?
+      const audioChunks = [];
+
+      // make groq TTS call
+      const chatCompletion = await groq.chat.completions.create({
+        "messages": [announcerCommentary],
+        "model": "play-tts",
+        "temperature": 1,
+        "max_completion_tokens": 1024,
+        "top_p": 1,
+        "stream": true,
+        "stop": null
+      });
+    
+      // not sure how to change this into header audio back out
+      for await (const chunk of chatCompletion) {
+        if (chunk.choices[0]?.delta?.content) {
+          audioChunks.push(Buffer.from(chunk.choices[0].delta.content, 'binary'));
+        }
+      }
+      const audioBuffer = Buffer.concat(audioChunks);
+
+      // Set audio headers and send response
+      res.setHeader('Content-Type', 'audio/mpeg');
+      res.setHeader('Content-Length', audioBuffer.length);
+      res.status(200).send(audioBuffer);
      res.status(200).json({ 
        message: 'Audio received', 
      });

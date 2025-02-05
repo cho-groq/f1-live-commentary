@@ -34,12 +34,24 @@ export default function MicChatButton(){
 						body: formData,
 					});
 
-					const data = await response.json();
+					// const data = await response.json();
+					const audioBlob = await response.blob();
 					if (response.ok) {
                         // play the conversational audio message back
                         console.log("Yeah it works")
+
+						console.log("blob response:");
+						console.log(audioBlob);
+						const audioUrl = URL.createObjectURL(audioBlob);
+
+						console.log("audio url response:");
+						console.log(audioUrl);
+						// Create and play the audio
+						const audio = new Audio(audioUrl);
+						audio.play();
+						
 					} else {
-						console.error("Transcription failed:", data.error);
+						console.error("Transcription failed:", audioBlob.error);
 					}
 				} catch (error) {
 					console.error("Error sending audio:", error);
