@@ -165,7 +165,31 @@ useEffect(() => {
     const lastCommentary = commentary[commentary.length - 1].text;
 
     console.log("LastCommentary: " +lastCommentary);
+   
     try {
+      let audioBlob = null;
+      if (isArabic == true){
+        console.log("Arabic is true");
+        const response = await fetch('/api/tts-arabic', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            lastCommentary
+          }),
+        });
+        console.log("api response:");
+        console.log(response);
+        
+    
+        if (!response.ok) {
+          throw new Error('Failed to generate arabic speech');
+        }
+        audioBlob = await response.blob();
+      }
+      else{
+      console.log("Arabic is false");
       const response = await fetch('/api/tts', {
         method: 'POST',
         headers: {
@@ -177,14 +201,13 @@ useEffect(() => {
       });
       console.log("api response:");
       console.log(response);
+      
   
       if (!response.ok) {
-        throw new Error('Failed to generate speech');
+        throw new Error('Failed to generate english speech');
       }
-
-      
-      
-      const audioBlob = await response.blob();
+      audioBlob = await response.blob();
+    }
 
       console.log("blob response:");
       console.log(audioBlob);
@@ -238,7 +261,7 @@ useEffect(() => {
   useEffect(() => {
     // Only set up the interval if we're not currently playing audio. and video is playing. else no play
     if (!isPlaying && isVideoPlaying) {
-      const intervalTime = isArabic ? 5000 : 4000;
+      const intervalTime = isArabic ? 6000 : 5000;
       
       const intervalId = setInterval(async () => {
         if (commentary.length === 0) return;

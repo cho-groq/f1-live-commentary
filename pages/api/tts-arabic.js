@@ -3,14 +3,14 @@ import path from "path";
 import Groq from "groq-sdk";
 
 const groq = new Groq({
-  apiKey: process.env.GROQ_API_KEY,
+  apiKey: "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",
 });
 
 const buildRequestHeaders = () => {
   console.log("key: "+process.env.GROQ_API_KEY);
   return {
     "Content-Type": "application/json",
-    Authorization: `Bearer ${process.env.GROQ_API_KEY}`, // Replace with actual authentication if needed
+    Authorization: `Bearer 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`, // Replace with actual authentication if needed
   };
 };
 
@@ -37,14 +37,15 @@ export default async function handler(req, res) {
 
     // const filename = `speech.mp3`;
     // const fullPath = path.join(speechPath, filename);
+    console.log("Arabic TTS \n\n\n");
     const AUDIO_SPEECH_URL = "https://api.groq.com/openai/v1/audio/speech";
       const response = await fetch(AUDIO_SPEECH_URL, {
         method: "POST",
         headers: buildRequestHeaders(),
         body: JSON.stringify({
-          model: "play-tts",
+          model: "play-tts-arabic",
           input: prompt,
-          voice: "Mary", // Change as needed
+          voice: "default", // Change as needed
         }),
       });
 

@@ -1,18 +1,10 @@
 import fs from "fs";
 import path from "path";
-import Groq from "groq-sdk";
+import OpenAI from "openai";
 
-const groq = new Groq({
-  apiKey: process.env.GROQ_API_KEY,
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY
 });
-
-const buildRequestHeaders = () => {
-  console.log("key: "+process.env.GROQ_API_KEY);
-  return {
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${process.env.GROQ_API_KEY}`, // Replace with actual authentication if needed
-  };
-};
 
 export default async function handler(req, res) {
   // console.log(req);
@@ -37,29 +29,19 @@ export default async function handler(req, res) {
 
     // const filename = `speech.mp3`;
     // const fullPath = path.join(speechPath, filename);
-    const AUDIO_SPEECH_URL = "https://api.groq.com/openai/v1/audio/speech";
-      const response = await fetch(AUDIO_SPEECH_URL, {
-        method: "POST",
-        headers: buildRequestHeaders(),
-        body: JSON.stringify({
-          model: "play-tts",
-          input: prompt,
-          voice: "Mary", // Change as needed
-        }),
-      });
 
-      const audioBuffer = await response.arrayBuffer();
-      //how to fit the above into output?
-    // const buffer = Buffer.from(await mp3.arrayBuffer());
+    const mp3 = await openai.audio.speech.create({
+      model: 'tts-1',
+      voice: 'ash',
+      input: prompt,
+    });
+
+    const buffer = Buffer.from(await mp3.arrayBuffer());
     // await fs.promises.writeFile(fullPath, buffer);
 
-    // res.setHeader('Content-Type', 'audio/mpeg');
-    // res.setHeader('Content-Length', buffer.length);
-    // res.status(200).send(buffer);
-    res.setHeader("Content-Type", "audio/mpeg");
-      res.setHeader("Content-Length", audioBuffer.byteLength);
-      
-      res.status(200).send(Buffer.from(audioBuffer));
+    res.setHeader('Content-Type', 'audio/mpeg');
+    res.setHeader('Content-Length', buffer.length);
+    res.status(200).send(buffer);
   } catch (error) {
     console.error('Error generating speech:', error);
     res.status(500).json({ message: 'Error generating speech' });
