@@ -1,16 +1,17 @@
 import fs from "fs";
 import path from "path";
 import Groq from "groq-sdk";
+import { GROQ_API_KEY } from "../../lib/config";
 
 const groq = new Groq({
-  apiKey: "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",
+  apiKey: process.env.GROQ_API_KEY,
 });
 
 const buildRequestHeaders = () => {
-  console.log("key: "+process.env.GROQ_API_KEY);
+  console.log("process key: "+process.env.GROQ_API_KEY);
   return {
     "Content-Type": "application/json",
-    Authorization: `Bearer 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`, // Replace with actual authentication if needed
+    Authorization: `Bearer ${process.env.GROQ_API_KEY}`, // Replace with actual authentication if needed
   };
 };
 

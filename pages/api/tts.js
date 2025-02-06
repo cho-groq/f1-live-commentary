@@ -1,13 +1,15 @@
 import fs from "fs";
 import path from "path";
 import Groq from "groq-sdk";
+import { GROQ_API_KEY } from "../../lib/config";
 
 const groq = new Groq({
   apiKey: process.env.GROQ_API_KEY,
 });
 
 const buildRequestHeaders = () => {
-  console.log("key: "+process.env.GROQ_API_KEY);
+  console.log("process key: "+process.env.GROQ_API_KEY);
+  console.log("config key: "+GROQ_API_KEY);
   return {
     "Content-Type": "application/json",
     Authorization: `Bearer ${process.env.GROQ_API_KEY}`, // Replace with actual authentication if needed
