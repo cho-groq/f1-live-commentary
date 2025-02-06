@@ -168,7 +168,7 @@ useEffect(() => {
    
     try {
       let audioBlob = null;
-      if (isArabic == true){
+      if (isArabicRef.current == true){
         console.log("Arabic is true");
         const response = await fetch('/api/tts-arabic', {
           method: 'POST',
@@ -179,13 +179,14 @@ useEffect(() => {
             lastCommentary
           }),
         });
-        console.log("api response:");
+        console.log("api response for ARABIC:");
         console.log(response);
         
     
         if (!response.ok) {
           throw new Error('Failed to generate arabic speech');
         }
+        console.log("ARABIC test:");
         audioBlob = await response.blob();
       }
       else{
@@ -255,7 +256,7 @@ useEffect(() => {
     console.error('Error:', error);
     alert("Failed to generate speech. Please try again.");
   }
-}, [commentary, isArabic, isMuted]);
+}, [commentary, isArabic, isArabicRef, isMuted]);
 
   const [isPlaying, setIsPlaying] = useState(false);
   useEffect(() => {

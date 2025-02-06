@@ -1,6 +1,7 @@
 import fs from "fs";
 import path from "path";
 import Groq from "groq-sdk";
+import { GROQ_API_KEY } from "../../lib/config";
 
 const groq = new Groq({
   apiKey: process.env.GROQ_API_KEY,
