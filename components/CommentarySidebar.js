@@ -60,7 +60,7 @@ export default function CommentarySidebar({
                       : 'bg-gray-700 text-white'
                   }`}
                 >
-                   <p className={`text-xs text-gray-400 ${isArabic ? "text-right" : ""}`}>
+                   <p className={`text-xs text-gray-400`}>
                     {new Date(comment.timestamp).toLocaleTimeString()}
                   </p>
                   <p className="mt-1">{comment.text}</p>
