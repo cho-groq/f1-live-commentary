@@ -33,7 +33,7 @@ export default function VideoPlayer({ videoSrc }) {
   const processingRef = useRef(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isMuted, toggleMute] = useState(false);
-  const [hideMessages, setHideMessages] = useState(false);
+  const [hideMessages, setHideMessages] = useState(true);
 
   const handleLanguageChange = (language) => {
     setIsLoading(true);
@@ -658,8 +658,6 @@ useEffect(() => {
             {isAIWatching && <div className="ai-watching">AI is watching</div>}
           </div>
         </div>
-        {!hideMessages && (
-  <div className="w-1/3 p-4 flex flex-col" style={{ maxHeight: "80vh" }}>
         {isLoading && (
         <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-sm pointer-events-none">
           <div className="text-center text-white pointer-events-none">
@@ -667,6 +665,9 @@ useEffect(() => {
           </div>
         </div>
       )}
+        {!hideMessages && (
+  <div className="w-1/3 p-4 flex flex-col" style={{ maxHeight: "80vh" }}>
+        
        <h2 className="text-2xl font-bold mb-2 text-white">Live Chat</h2>
        
 
