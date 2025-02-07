@@ -46,7 +46,7 @@ export default async function handler(req, res) {
         body: JSON.stringify({
           model: "play-tts",
           input: prompt,
-          voice: "Mary", // Change as needed
+          voice: "Angelo-PlayAI", // Change as needed
         }),
       });
 

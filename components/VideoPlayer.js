@@ -673,11 +673,14 @@ useEffect(() => {
 
           <CommentarySidebar
             commentary={commentary}
-            showAIMessages={showAIMessages}
-            onToggleAIMessages={() => setShowAIMessages(!showAIMessages)}
-            // onGenerateCommentary={handleTextToSpeech}
-            isAIWatching={isAIWatching}
-            onSendMessage={onSendMessage}
+            
+    // showAIMessages={showAIMessages}
+
+    isAIWatching={isAIWatching}
+    // onToggleAIMessages={() => setShowAIMessages(!showAIMessages)}
+    isArabic={isArabic}
+    // onGenerateCommentary={handleTextToSpeech}
+    // onSendMessage={onSendMessage}
 
           />
         </div>)}

@@ -45,10 +45,10 @@ export default async function handler(req, res) {
       // console.log("Similarity search performed with prompt:", vectorSearch);
       
       // delete the rows for storage purposes
-      const delee = await query(`
-        DELETE
-        FROM commentary_table
-      `);
+      // const delee = await query(`
+      //   DELETE
+      //   FROM commentary_table
+      // `);
 
 
       // Fetch commentaries over time

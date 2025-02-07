@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 export default function CommentarySidebar({
   commentary,
   isAIWatching,
+  isArabic,
 }) {
   const chatBoxRef = useRef(null);
   const [message, setMessage] = useState('');
@@ -59,7 +60,7 @@ export default function CommentarySidebar({
                       : 'bg-gray-700 text-white'
                   }`}
                 >
-                  <p className="text-xs text-gray-400">
+                   <p className={`text-xs text-gray-400 ${isArabic ? "text-right" : ""}`}>
                     {new Date(comment.timestamp).toLocaleTimeString()}
                   </p>
                   <p className="mt-1">{comment.text}</p>
