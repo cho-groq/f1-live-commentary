@@ -132,7 +132,7 @@ async function whisper(audioFile) {
     const transcription = await groq.audio.transcriptions.create({
       file: fs.createReadStream(tempFilePath), // Pass the temporary file path
       model: "whisper-large-v3-turbo",
-      prompt: "U.S. F1 Grand Prix. Drivers may include: Norris, Verstappen, Leclerc.",
+      prompt: "Saudi Arabian F1 Grand Prix at the Jeddah Corniche Circuit. Drivers may include: Verstappen, Leclerc, Perez, Hamilton.",
       response_format: "text",
       language: "en",
       temperature: 0.0,
