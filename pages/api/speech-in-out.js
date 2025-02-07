@@ -251,10 +251,9 @@ export default async function handler(req, res) {
       // text to text conversational analyst. copied and pasted from other one
       const chatCompletion2 = await groq.chat.completions.create({
         messages: [
-        
           {
             role: "system",
-            content: 'You are a F1 sports conversational analyst for the Saudi Arabian Grand Prix. The driver starting order is: 1. Verstappen 2. Leclerc 3. Perez 4. Alonso 5. Piastri 6. Norris 7. Russell 8. Hamilton. Answer my question in less than 20 words.',
+            content: 'You are a F1 sports conversational analyst for the 2024 United States Grand Prix - Austin. The driver starting order is: 1. Norris 2. Verstappen 3. Sainz 4. Leclerc 5. Piastri. Answer my question in less than 20 words.',
           },
           {
             role: "user",

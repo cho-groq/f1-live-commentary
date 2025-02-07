@@ -486,7 +486,7 @@ useEffect(() => {
             type="monotone"
             dataKey="warriorsScore"
             stroke="#00FFFF" // Neon blue for Warriors
-            name="Perez"
+            name="Norris"
             dot={false}
             isAnimationActive={false}
           />
@@ -536,7 +536,7 @@ useEffect(() => {
             type="monotone"
             dataKey="winProbability"
             stroke="#6ec9eb"
-            name="Perez Win Probability %"
+            name="Norris Win Probability %"
             dot={false}
             isAnimationActive={false}
           />
@@ -712,31 +712,33 @@ useEffect(() => {
         <div className="p-2 text-center">1</div>
         <div className="p-2 col-span-2">Max Verstappen</div>
         <div className="p-2 col-span-2">Red Bull Racing</div>
-        <div className="p-2 text-center">26</div>
+        <div className="p-2 text-center">354</div>
       </div>
       <div className="grid grid-cols-6 border-b border-gray-700 hover:bg-gray-800 transition-colors">
         <div className="p-2 text-center">2</div>
-        <div className="p-2 col-span-2">Sergio Perez</div>
-        <div className="p-2 col-span-2">Red Bull Racing</div>
-        <div className="p-2 text-center">18</div>
+        <div className="p-2 col-span-2">Lando Norris</div>
+        <div className="p-2 col-span-2">McLaren</div>
+        <div className="p-2 text-center">297</div>
       </div>
       <div className="grid grid-cols-6 border-b border-gray-700 hover:bg-gray-800 transition-colors">
         <div className="p-2 text-center">3</div>
-        <div className="p-2 col-span-2">Carlos Sainz</div>
+        <div className="p-2 col-span-2">Charles Leclerc</div>
         <div className="p-2 col-span-2">Ferrari</div>
-        <div className="p-2 text-center">15</div>
+        <div className="p-2 text-center">275</div>
       </div>
       <div className="grid grid-cols-6 border-b border-gray-700 hover:bg-gray-800 transition-colors">
         <div className="p-2 text-center">4</div>
-        <div className="p-2 col-span-2">Charles Leclerc</div>
-        <div className="p-2 col-span-2">Ferrari</div>
-        <div className="p-2 text-center">12</div>
+       
+        <div className="p-2 col-span-2">Oscar Piastri</div>
+        <div className="p-2 col-span-2">McLaren</div>
+        <div className="p-2 text-center">247</div>
       </div>
       <div className="grid grid-cols-6 hover:bg-gray-800 transition-colors">
         <div className="p-2 text-center">5</div>
-        <div className="p-2 col-span-2">George Russell</div>
-        <div className="p-2 col-span-2">Mercedes</div>
-        <div className="p-2 text-center">10</div>
+        
+        <div className="p-2 col-span-2">Carlos Sainz</div>
+        <div className="p-2 col-span-2">Ferrari</div>
+        <div className="p-2 text-center">215</div>
       </div>
     </div>
               {/* <h3 className="text-xl font-semibold mb-2">Past Scores Over Time</h3>
@@ -747,7 +749,7 @@ useEffect(() => {
 
             <div className="analytics-card">
               <h3 className="text-xl font-semibold mb-2">
-              Perez Win Probability
+              Norris Win Probability
               </h3>
               <GSWinProbabilityChart
                 winProbabilityData={analyticsData?.winProbabilityOverTime || []}
