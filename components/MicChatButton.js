@@ -89,24 +89,23 @@ export default function MicChatButton(){
 
 
     return (
-        <div className="relative max-w-48 ml-6">
-            
-        <button type="button" 
-        // disabled={disabled}
-        onClick={toggleRecording}
-        className={`rounded-sm relative z-20 generate-commentary ${
-            isRecording ? "text-orange-100 hover:text-orange-200 brightness-90" : ""
-        }`}
-        >Talk with the Commentator <Mic className="outline-white inline" />
-        
-        </button>
-        {isRecording && (
-				<div className="absolute inset-0 z-0">
-					<div className="absolute inset-0 animate-ping rounded bg-orange-400 opacity-75" />
-					<div className="absolute inset-[-4px] animate-pulse rounded bg-orange-300 opacity-50" />
-					<div className="absolute inset-[-8px] animate-pulse delay-75 rounded bg-orange-200 opacity-25" />
-				</div>
-			)}
+        <div className="fixed bottom-4 right-4 z-50">
+            <button type="button" 
+			// disabled={disabled}
+            onClick={toggleRecording}
+            className={`rounded-sm relative z-20 generate-commentary ${
+                isRecording ? "text-orange-100 hover:text-orange-200 brightness-90" : ""
+            }`}
+            >
+                Talk with the Commentator <Mic className="outline-white inline" />
+            </button>
+            {isRecording && (
+                <div className="absolute inset-0 z-0">
+                    <div className="absolute inset-0 animate-ping rounded bg-orange-400 opacity-75" />
+                    <div className="absolute inset-[-4px] animate-pulse rounded bg-orange-300 opacity-50" />
+                    <div className="absolute inset-[-8px] animate-pulse delay-75 rounded bg-orange-200 opacity-25" />
+                </div>
+            )}
         </div> 
-        );
+    );
 }
