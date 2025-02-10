@@ -46,8 +46,8 @@ export default function CommentarySidebar({
       >
         <div className="space-y-4">
           {commentary.map((comment, index) => {
-             // Only render up to the second-to-last element
-            if (index === commentary.length - 1) {
+             // Only render up to the second-to-last element and don't render first element
+            if (index === 0 || index === commentary.length - 1) {
               return null;
             }
             if (true) {

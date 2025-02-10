@@ -123,6 +123,10 @@ useEffect(() => {
 }, []);
 
   useEffect(() => {
+    // hopefully only works once
+    if(commentary.length === 0){
+      fetchCommentary(); 
+    }
     const video = videoRef.current;
     if (video) {
       const handlePlay = () => {
@@ -157,7 +161,7 @@ useEffect(() => {
 
   // Function to handle text-to-speech when the "Speak" button is clicked
   const handleTextToSpeech = useCallback(async () => {
-    if (commentary.length === 0) {
+    if (commentary.length === 0 || isVideoPlaying == false) {
       // alert("No commentary available for speech synthesis.");
       return;
     }
@@ -261,7 +265,7 @@ useEffect(() => {
   const [isPlaying, setIsPlaying] = useState(false);
   useEffect(() => {
     // Only set up the interval if we're not currently playing audio. and video is playing. else no play
-    if (!isPlaying && isVideoPlaying) {
+    // if (!isPlaying && isVideoPlaying) {
       const intervalTime = isArabic ? 6000 : 5000;
       
       const intervalId = setInterval(async () => {
@@ -277,7 +281,7 @@ useEffect(() => {
   
       // Clean up the interval when the component unmounts
       return () => clearInterval(intervalId);
-    }
+    // }
   }, [handleTextToSpeech, commentary, isPlaying, isArabic, isVideoPlaying]);
 
 

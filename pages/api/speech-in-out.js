@@ -279,7 +279,7 @@ export default async function handler(req, res) {
         body: JSON.stringify({
           model: "play-tts",
           input: announcerCommentary,
-          voice: "Angelo-PlayAI", // Change as needed
+          voice: "Arthur-PlayAI", // Change as needed
         }),
       });
       console.log("testtesttest");
