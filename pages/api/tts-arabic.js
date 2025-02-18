@@ -8,7 +8,7 @@ const groq = new Groq({
 });
 
 const buildRequestHeaders = () => {
-  console.log("process key: "+process.env.GROQ_API_KEY);
+  // console.log("process key: "+process.env.GROQ_API_KEY);
   return {
     "Content-Type": "application/json",
     Authorization: `Bearer ${process.env.GROQ_API_KEY}`, // Replace with actual authentication if needed
@@ -23,10 +23,10 @@ export default async function handler(req, res) {
 
   try {
     // console.log(Object.keys(req));
-    console.log("REQ KEYS: " + Object.keys(req));
-    console.log(req.body);
+    // console.log("REQ KEYS: " + Object.keys(req));
+    // console.log(req.body);
     const prompt  = req.body.lastCommentary;
-    console.log("PROMPT: " + prompt)
+    // console.log("PROMPT: " + prompt)
     if (!prompt) {
       return res.status(400).json({ message: 'Prompt is required' });
     }
@@ -38,7 +38,7 @@ export default async function handler(req, res) {
 
     // const filename = `speech.mp3`;
     // const fullPath = path.join(speechPath, filename);
-    console.log("Arabic TTS \n\n\n");
+    // console.log("Arabic TTS \n\n\n");
     const AUDIO_SPEECH_URL = "https://api.groq.com/openai/v1/audio/speech";
       const response = await fetch(AUDIO_SPEECH_URL, {
         method: "POST",

@@ -14,10 +14,10 @@ export default async function handler(req, res) {
 
   try {
     // console.log(Object.keys(req));
-    console.log("REQ KEYS: " + Object.keys(req));
-    console.log(req.body);
+    // console.log("REQ KEYS: " + Object.keys(req));
+    // console.log(req.body);
     const prompt  = req.body.lastCommentary;
-    console.log("PROMPT: " + prompt)
+    // console.log("PROMPT: " + prompt)
     if (!prompt) {
       return res.status(400).json({ message: 'Prompt is required' });
     }

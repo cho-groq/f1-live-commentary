@@ -10,28 +10,28 @@ const groq = new Groq({
 
 export async function handler(req, res) {
 
-  console.log("this is the req: "+req);
+  // console.log("this is the req: "+req);
   if (req.method !== 'POST') {
     return res.status(405).json({ message: 'Method not allowed' });
   }
 
   try {
-    console.log("REQ KEYS: " + Object.keys(req));
+    // console.log("REQ KEYS: " + Object.keys(req));
     // it should be inside the req body?
-    console.log("REQ body: " + req.body);
+    // console.log("REQ body: " + req.body);
 
     const formData = await req.formData();
-    console.log(formData);
+    // console.log(formData);
     const audioFile = formData.get('audio');
     if (!audioFile) {
       return res.status(400).json({ message: 'audioFile is required' });
     }
-    console.log("type of audiofile is: " + typeof audioFile);
+    // console.log("type of audiofile is: " + typeof audioFile);
     const arrayBuffer = await audioFile.arrayBuffer();
     const buffer1 = Buffer.from(arrayBuffer);
 
     const file = new File([buffer1], 'audio.webm', { type: 'audio/webm' });
-    console.log("file print out" + file)
+    // console.log("file print out" + file)
     // Create a transcription job
   const transcription = await groq.audio.transcriptions.create({
     file: file, // Required path to audio file - replace with your audio file!
@@ -43,7 +43,7 @@ export async function handler(req, res) {
   });
 
  // Log the transcribed text
- console.log("text transcribed: " + transcription.text);
+//  console.log("text transcribed: " + transcription.text);
   let speechTranscription = transcription.text
 
   // open ai TTS in the meantime 

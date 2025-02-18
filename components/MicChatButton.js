@@ -1,7 +1,7 @@
 import { useState, useRef } from "react";
 import { Mic } from "lucide-react";
 
-export default function MicChatButton(){
+export default function MicChatButton({conversationalAnnouncerPrompt}){
 
     const [isRecording, setIsRecording] = useState(false);
 	const mediaRecorder = useRef(null);
@@ -10,23 +10,24 @@ export default function MicChatButton(){
 
     const startRecording = async () => {
 		try {
-            console.log("starting recording");
+            // console.log("starting recording");
 			const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
 			mediaRecorder.current = new MediaRecorder(stream);
 			audioChunks.current = [];
-            console.log(audioChunks);
+            // console.log(audioChunks);
 
 			mediaRecorder.current.ondataavailable = (event) => {
 				audioChunks.current.push(event.data);
-                console.log("audiocurrent"+audioChunks.current);
+                // console.log("audiocurrent"+audioChunks.current);
 
 			};
 
 			mediaRecorder.current.onstop = async () => {
 				const audioBlob = new Blob(audioChunks.current, { type: "audio/webm" });
 				const formData = new FormData();
-                console.log("audioblob: " + audioBlob);
+                // console.log("audioblob: " + audioBlob);
 				formData.append("audio", audioBlob);
+				formData.append("conversationalAnnouncerPrompt", conversationalAnnouncerPrompt);
 
 				try {
 					const response = await fetch("/api/speech-in-out", {
@@ -38,14 +39,14 @@ export default function MicChatButton(){
 					const audioBlob = await response.blob();
 					if (response.ok) {
                         // play the conversational audio message back
-                        console.log("Yeah it works")
+                        // console.log("Yeah it works")
 
-						console.log("blob response:");
-						console.log(audioBlob);
+						// console.log("blob response:");
+						// console.log(audioBlob);
 						const audioUrl = URL.createObjectURL(audioBlob);
 
-						console.log("audio url response:");
-						console.log(audioUrl);
+						// console.log("audio url response:");
+						// console.log(audioUrl);
 						// Create and play the audio
 						const audio = new Audio(audioUrl);
 						audio.play();

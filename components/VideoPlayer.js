@@ -35,6 +35,25 @@ export default function VideoPlayer({ videoSrc }) {
   const [isMuted, toggleMute] = useState(false);
   const [hideMessages, setHideMessages] = useState(true);
 
+  
+  const [analystPrompt, setAnalystPrompt] = useState("You are an expert F1 motorsports analyst for the 2024 United States Grand Prix - Circuit of The Americas - Austin. Talk about the section of the track they're in. Mention which F1 teams and drivers are in the picture. This is the start of the race. \n The driver starting order is: 1. Norris 2. Verstappen 3. Sainz 4. Leclerc 5. Piastri 6. Gasly");
+  const [commentatorPrompt, setCommentatorPrompt] = useState("You are a F1 sports commentator for the United States Grand Prix. Be succinct and expressive. Comment on the scene described in less than 18 words. Do not use the phrases 'Folks' or 'And they're off' \n Possible topics: [DRIVER], [Team], [The part of the track].");
+  const [conversationalAnnouncerPrompt, setConversationalAnnouncerPrompt] = useState("You are a F1 sports conversational analyst for the 2024 United States Grand Prix - Austin. The driver starting order is: 1. Norris 2. Verstappen 3. Sainz 4. Leclerc 5. Piastri. Answer my question in less than 20 words.");
+
+  const analystPromptRef = useRef(analystPrompt);
+  const commentatorPromptRef = useRef(commentatorPrompt);
+  const conversationalAnnouncerPromptRef = useRef(commentatorPrompt);
+
+// Keep refs updated whenever state changes
+useEffect(() => {
+  analystPromptRef.current = analystPrompt;
+}, [analystPrompt]);
+
+useEffect(() => {
+  commentatorPromptRef.current = commentatorPrompt;
+}, [commentatorPrompt]);
+
+
   const handleLanguageChange = (language) => {
     setIsLoading(true);
     setIsArabic(language === 'arabic');
@@ -168,12 +187,13 @@ useEffect(() => {
 
     const lastCommentary = commentary[commentary.length - 1].text;
 
-    console.log("LastCommentary: " +lastCommentary);
-   
+    // console.log("LastCommentary: " +lastCommentary);
+    
+    
     try {
       let audioBlob = null;
       if (isArabicRef.current == true){
-        console.log("Arabic is true");
+        // console.log("Arabic is true");
         const response = await fetch('/api/tts-arabic', {
           method: 'POST',
           headers: {
@@ -183,18 +203,20 @@ useEffect(() => {
             lastCommentary
           }),
         });
-        console.log("api response for ARABIC:");
-        console.log(response);
+        // console.log("api response for ARABIC:");
+        // console.log(response);
         
     
         if (!response.ok) {
           throw new Error('Failed to generate arabic speech');
         }
-        console.log("ARABIC test:");
+        // console.log("ARABIC test:");
         audioBlob = await response.blob();
       }
       else{
-      console.log("Arabic is false");
+      // console.log("Arabic is false");
+      console.time("Execution Time for TTS API");
+    
       const response = await fetch('/api/tts', {
         method: 'POST',
         headers: {
@@ -204,22 +226,24 @@ useEffect(() => {
           lastCommentary
         }),
       });
-      console.log("api response:");
-      console.log(response);
+      // console.log("api response:");
+      // console.log(response);
+      
       
   
       if (!response.ok) {
         throw new Error('Failed to generate english speech');
       }
       audioBlob = await response.blob();
+      console.timeEnd("Execution Time for TTS API");
     }
-
-      console.log("blob response:");
-      console.log(audioBlob);
+    console.time("Execution Time for Playing"); // 18 seconds.
+      // console.log("blob response:");
+      // console.log(audioBlob);
       const audioUrl = URL.createObjectURL(audioBlob);
 
-      console.log("audio url response:");
-      console.log(audioUrl);
+      // console.log("audio url response:");
+      // console.log(audioUrl);
       // Create and play the audio
       const audio = new Audio(audioUrl);
       audio.playbackRate = isArabic ? 1.2 : 1.4;
@@ -255,6 +279,8 @@ useEffect(() => {
         clearInterval(muteCheckInterval);
       };
     });
+
+    console.timeEnd("Execution Time for Playing");
 
   } catch (error) {
     console.error('Error:', error);
@@ -309,9 +335,9 @@ useEffect(() => {
        pastCommentaries = lastN.map(item => item.text).join(' ');
      }
 
-     console.log(isArabicRef.current, pastCommentaries);
-
-      
+    //  console.log(isArabicRef.current, pastCommentaries);
+    console.log(analystPromptRef.current + "\n\n" + commentatorPromptRef.current);
+    console.time("Fetch Commentary Time");
       const response = await fetch("/api/commentary", {
         method: "POST",
         headers: {
@@ -323,11 +349,14 @@ useEffect(() => {
           height: canvas.height,
           isArabic: isArabicRef.current,
           pastCommentaries,
+          analystPrompt: analystPromptRef.current,  // Use ref
+          commentatorPrompt: commentatorPromptRef.current  // Use ref
         }),
       });
 
       const data = await response.json();
-      console.log(data);
+      console.time("Fetch Commentary Time");
+      // console.log(data);
 
       if (data.text) {
         setCommentary((prev) => [
@@ -689,6 +718,43 @@ useEffect(() => {
           />
         </div>)}
       </div>
+
+
+<div className="text-white bg-gray-800 p-4 rounded-lg flex flex-wrap">
+  <div className="flex flex-col w-full sm:w-1/3 px-4">
+    <label htmlFor="analystPrompt" className="text-lg font-semibold mb-2">Analyst Prompt</label>
+    <textarea
+      id="analystPrompt"
+      className="w-full p-2 border rounded-lg bg-gray-700 text-white"
+      value={analystPrompt}
+      onChange={(e) => setAnalystPrompt(e.target.value)}
+      rows={4}
+    />
+  </div>
+
+  <div className="flex flex-col w-full sm:w-1/3 px-4">
+    <label htmlFor="commentatorPrompt" className="text-lg font-semibold mb-2">Commentator Prompt</label>
+    <textarea
+      id="commentatorPrompt"
+      className="w-full p-2 border rounded-lg bg-gray-700 text-white"
+      value={commentatorPrompt}
+      onChange={(e) => setCommentatorPrompt(e.target.value)}
+      rows={4}
+    />
+  </div>
+
+  <div className="flex flex-col w-full sm:w-1/3 px-4">
+    <label htmlFor="conversationalAnnouncerPrompt" className="text-lg font-semibold mb-2">Conversational Announcer Prompt</label>
+    <textarea
+      id="conversationalAnnouncerPrompt"
+      className="w-full p-2 border rounded-lg bg-gray-700 text-white"
+      value={conversationalAnnouncerPrompt}
+      onChange={(e) => setConversationalAnnouncerPrompt(e.target.value)}
+      rows={4}
+    />
+  </div>
+</div>
+
          <div className="bg-black p-4">
         <button
           onClick={() => setShowAnalytics(!showAnalytics)}
@@ -696,10 +762,12 @@ useEffect(() => {
         >
           {showAnalytics ? "Hide Analytics" : "Show Analytics"}
         </button>
-        <MicChatButton />
+        <MicChatButton conversationalAnnouncerPrompt={conversationalAnnouncerPromptRef.current}/>
    
         {showAnalytics && (
           <div className="analytics-container">
+
+
 
 <div className="analytics-card">
             <div className="w-full max-w-4xl bg-gray-900 text-gray-200 shadow-md rounded-sm overflow-hidden">

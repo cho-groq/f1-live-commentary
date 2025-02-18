@@ -124,10 +124,10 @@ async function whisper(audioFile) {
 
   // Create a temporary file path
   const tempFilePath = path.join(os.tmpdir(), `audio_${Date.now()}.mp3`);
-  console.log("before write");
+  // console.log("before write");
   // Write the buffer to a temporary file
   fs.writeFileSync(tempFilePath, audioFile.buffer);
-  console.log("after write");
+  // console.log("after write");
   try {
     const transcription = await groq.audio.transcriptions.create({
       file: fs.createReadStream(tempFilePath), // Pass the temporary file path
@@ -152,7 +152,7 @@ export const config = {
 };
 
 const buildRequestHeaders = () => {
-  console.log("key: "+process.env.GROQ_API_KEY);
+  // console.log("key: "+process.env.GROQ_API_KEY);
   return {
     "Content-Type": "application/json",
     Authorization: `Bearer ${process.env.GROQ_API_KEY}`, // Replace with actual authentication if needed
@@ -161,17 +161,17 @@ const buildRequestHeaders = () => {
 
 export default async function handler(req, res) {
 
-  console.log("this is the req: "+req);
+  // console.log("this is the req: "+req);
   if (req.method !== 'POST') {
     return res.status(405).json({ message: 'Method not allowed' });
   }
 
   try {
-    console.log("REQ KEYS: " + Object.keys(req));
-    console.log("REQ VALUES: " + Object.values(req));
+    // console.log("REQ KEYS: " + Object.keys(req));
+    // console.log("REQ VALUES: " + Object.values(req));
     const { file } = await handleFormParse(req);
     // console.log('Files object:', JSON.stringify(files, null, 2));
-    console.log("file: " + file);
+    // console.log("file: " + file);
     // console.log("fields: " + fields);
     // console.log("files: " +files);
 
@@ -241,19 +241,19 @@ export default async function handler(req, res) {
       let result = chatCompletion1.choices[0]?.message?.content;
       const resultObj = JSON.parse(result); // Parse the string into a JSON object
       // console.log()
-      console.log("checkpoint: " + resultObj.isText);
+      // console.log("checkpoint: " + resultObj.isText);
       if (resultObj.isText !== "yes"){
         return res.status(400).json({ error: "Please try again and speak clearly." });
       }
       
-      console.log("made it to here");
+      // console.log("made it to here");
     
       // text to text conversational analyst. copied and pasted from other one
       const chatCompletion2 = await groq.chat.completions.create({
         messages: [
           {
             role: "system",
-            content: 'You are a F1 sports conversational analyst for the 2024 United States Grand Prix - Austin. The driver starting order is: 1. Norris 2. Verstappen 3. Sainz 4. Leclerc 5. Piastri. Answer my question in less than 20 words.',
+            content: '',
           },
           {
             role: "user",
@@ -269,7 +269,7 @@ export default async function handler(req, res) {
       });
 
       let announcerCommentary = chatCompletion2.choices[0]?.message?.content;
-      console.log("Talker Response: " + announcerCommentary);
+      // console.log("Talker Response: " + announcerCommentary);
       try {
         // make groq TTS call
       const AUDIO_SPEECH_URL = "https://api.groq.com/openai/v1/audio/speech";
@@ -282,14 +282,14 @@ export default async function handler(req, res) {
           voice: "Arthur-PlayAI", // Change as needed
         }),
       });
-      console.log("testtesttest");
+      // console.log("testtesttest");
   if (!response.ok) {
-    console.log("response was not ok")
+    // console.log("response was not ok")
     let variable = await response.text();
-    console.log("this is the reponse.text: "+variable);
+    // console.log("this is the reponse.text: "+variable);
         return res.status(response.status).json({ error: "TTS API Error", details: variable});
       }
-      console.log("response is ok")
+      // console.log("response is ok")
   
       const audioBuffer = await response.arrayBuffer();
   
@@ -298,10 +298,10 @@ export default async function handler(req, res) {
       res.setHeader("Content-Length", audioBuffer.byteLength);
       
       res.status(200).send(Buffer.from(audioBuffer));
-      console.log("made it all the way")
+      // console.log("made it all the way")
       } catch (error) {
-        console.log("error messagegegege:" )
-        console.log(error)
+        // console.log("error messagegegege:" )
+        // console.log(error)
         res.status(500).json({ error: error.message });
       }
       

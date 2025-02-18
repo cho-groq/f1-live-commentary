@@ -8,8 +8,8 @@ const groq = new Groq({
 });
 
 const buildRequestHeaders = () => {
-  console.log("process key: "+process.env.GROQ_API_KEY);
-  console.log("config key: "+GROQ_API_KEY);
+  // console.log("process key: "+process.env.GROQ_API_KEY);
+  // console.log("config key: "+GROQ_API_KEY);
   return {
     "Content-Type": "application/json",
     Authorization: `Bearer ${process.env.GROQ_API_KEY}`, // Replace with actual authentication if needed
@@ -24,10 +24,10 @@ export default async function handler(req, res) {
 
   try {
     // console.log(Object.keys(req));
-    console.log("REQ KEYS: " + Object.keys(req));
-    console.log(req.body);
+    // console.log("REQ KEYS: " + Object.keys(req));
+    // console.log(req.body);
     const prompt  = req.body.lastCommentary;
-    console.log("PROMPT: " + prompt)
+    // console.log("PROMPT: " + prompt)
     if (!prompt) {
       return res.status(400).json({ message: 'Prompt is required' });
     }
@@ -39,6 +39,8 @@ export default async function handler(req, res) {
 
     // const filename = `speech.mp3`;
     // const fullPath = path.join(speechPath, filename);
+    // console.time("Execution Time");
+    // console.log("this is the prompt:"+prompt);
     const AUDIO_SPEECH_URL = "https://api.groq.com/openai/v1/audio/speech";
       const response = await fetch(AUDIO_SPEECH_URL, {
         method: "POST",
@@ -49,8 +51,10 @@ export default async function handler(req, res) {
           voice: "Arthur-PlayAI", // Change as needed
         }),
       });
-
+      // console.timeEnd("Execution Time");
+      // console.time("Execution Time");
       const audioBuffer = await response.arrayBuffer();
+      // console.timeEnd("Execution Time"); // 1.2 seconds maybe
       //how to fit the above into output?
     // const buffer = Buffer.from(await mp3.arrayBuffer());
     // await fs.promises.writeFile(fullPath, buffer);
@@ -58,10 +62,12 @@ export default async function handler(req, res) {
     // res.setHeader('Content-Type', 'audio/mpeg');
     // res.setHeader('Content-Length', buffer.length);
     // res.status(200).send(buffer);
+    console.time("Execution Time for Buffer send");
     res.setHeader("Content-Type", "audio/mpeg");
       res.setHeader("Content-Length", audioBuffer.byteLength);
       
       res.status(200).send(Buffer.from(audioBuffer));
+      console.timeEnd("Execution Time for Buffer send");
   } catch (error) {
     console.error('Error generating speech:', error);
     res.status(500).json({ message: 'Error generating speech' });
