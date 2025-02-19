@@ -33,7 +33,9 @@ export default function VideoPlayer({ videoSrc }) {
   const processingRef = useRef(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isMuted, toggleMute] = useState(false);
+  const isMutedRef = useRef(isMuted);
   const [hideMessages, setHideMessages] = useState(true);
+  const audioRef = useRef(null);
 
   
   const [analystPrompt, setAnalystPrompt] = useState("You are an expert F1 motorsports analyst for the 2024 United States Grand Prix - Circuit of The Americas - Austin. Talk about the section of the track they're in. Mention which F1 teams and drivers are in the picture. This is the start of the race. \n The driver starting order is: 1. Norris 2. Verstappen 3. Sainz 4. Leclerc 5. Piastri 6. Gasly");
@@ -65,17 +67,15 @@ useEffect(() => {
   const handleToggleMute = () => {
     toggleMute(!isMuted);
   // if we are muting then need to forloop mute all audio immediately
-  if (isMuted == true){
+  if (isMuted == true && audioRef != null){
+    audioRef.current.muted = true
+    // maybe this actually works
     const audioElements = document.querySelectorAll('audio');
     audioElements.forEach(audio => {
       audio.muted = true;
     });
   }
 
-  };
-
-  const getIsMuted = () => {
-    return isMuted;
   };
   
 
@@ -246,15 +246,17 @@ useEffect(() => {
       // console.log(audioUrl);
       // Create and play the audio
       const audio = new Audio(audioUrl);
+      audioRef.current = audio;
       audio.playbackRate = isArabic ? 1.2 : 1.4;
-      if (getIsMuted()) {
+      if (isMutedRef.current) { // aka not null
         audio.muted = true;
+        audioRef.current.muted = true;
       }
 
        // Add event listener to check mute status before playing
     const checkMuteBeforePlaying = () => {
       // in hopes of getting the global changed version of the variable
-      if (getIsMuted() == false) {
+      if (isMutedRef.current == false) {
         audio.play(); // it's right after this line here that we need to make it stop playing
       }
       audio.removeEventListener('canplaythrough', checkMuteBeforePlaying);
@@ -264,8 +266,11 @@ useEffect(() => {
 
     // Optional: Add a method to stop audio if muted mid-playback
     // in hopes of getting the global changed version of the variable
+    
     const stopIfMuted = () => {
-      if (getIsMuted() == true) {
+      if (isMutedRef.current == true) {
+        audioRef.current.muted = true;
+        // maybe this actually works
         audio.muted = true;
         audio.pause();
       }
@@ -286,7 +291,7 @@ useEffect(() => {
     console.error('Error:', error);
     alert("Failed to generate speech. Please try again.");
   }
-}, [commentary, isArabic, isArabicRef, isMuted]);
+}, [commentary, isArabic, isArabicRef, isMuted, isMutedRef]);
 
   const [isPlaying, setIsPlaying] = useState(false);
   useEffect(() => {
