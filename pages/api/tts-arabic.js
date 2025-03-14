@@ -44,7 +44,7 @@ export default async function handler(req, res) {
         method: "POST",
         headers: buildRequestHeaders(),
         body: JSON.stringify({
-          model: "play-tts-arabic",
+          model: "playai-tts-arabic",
           input: prompt,
           voice: "Nasser-PlayAI", // Change as needed
         }),

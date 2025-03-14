@@ -4,7 +4,7 @@ import { GROQ_API_KEY } from "../../lib/config";
 export default async function handler(req, res) {
   // console.log("Commentary API handler called");
   // console.log("GROQ_API_KEY is set:", !!GROQ_API_KEY);
-  console.time("Commentary time \n\n\n\n");
+  let t9 = performance.now();
   if (req.method === "POST") {
     try {
       const { imageData, width, height, isArabic, pastCommentaries, analystPrompt, commentatorPrompt } = req.body;
@@ -23,7 +23,8 @@ export default async function handler(req, res) {
       }
 
       res.status(200).json(commentary);
-      console.timeEnd("Commentary time \n\n\n\n");
+      let t10 = performance.now();
+      console.log(`commentary.js handler ${t10-t9 }milliseconds`)
     } catch (error) {
       console.error("Error in generating commentary:", error);
       res.status(500).json({

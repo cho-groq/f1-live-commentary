@@ -277,7 +277,7 @@ export default async function handler(req, res) {
         method: "POST",
         headers: buildRequestHeaders(),
         body: JSON.stringify({
-          model: "play-tts",
+          model: "playai-tts",
           input: announcerCommentary,
           voice: "Arthur-PlayAI", // Change as needed
         }),

@@ -192,6 +192,7 @@ useEffect(() => {
     
     try {
       let audioBlob = null;
+      let t1 = performance.now();
       if (isArabicRef.current == true){
         // console.log("Arabic is true");
         const response = await fetch('/api/tts-arabic', {
@@ -215,7 +216,7 @@ useEffect(() => {
       }
       else{
       // console.log("Arabic is false");
-      console.time("Execution Time for TTS API");
+     
     
       const response = await fetch('/api/tts', {
         method: 'POST',
@@ -235,9 +236,12 @@ useEffect(() => {
         throw new Error('Failed to generate english speech');
       }
       audioBlob = await response.blob();
-      console.timeEnd("Execution Time for TTS API");
     }
-    console.time("Execution Time for Playing"); // 18 seconds.
+    let t2 = performance.now();
+
+    console.log(`Execution Time for Execution Time for TTS API ${t2 - t1} milliseconds.`); // 3 seconds?
+
+    let t13 = performance.now();
       // console.log("blob response:");
       // console.log(audioBlob);
       const audioUrl = URL.createObjectURL(audioBlob);
@@ -285,35 +289,40 @@ useEffect(() => {
       };
     });
 
-    console.timeEnd("Execution Time for Playing");
-
+    let t14 = performance.now();
+    console.log(`Setting up and playing the audio: ${t14 - t13} milliseconds.`);
   } catch (error) {
     console.error('Error:', error);
     alert("Failed to generate speech. Please try again.");
   }
 }, [commentary, isArabic, isArabicRef, isMuted, isMutedRef]);
 
-  const [isPlaying, setIsPlaying] = useState(false);
+  const [intervalTime, setIntervalTime] = useState(0);
+
   useEffect(() => {
-    // Only set up the interval if we're not currently playing audio. and video is playing. else no play
-    // if (!isPlaying && isVideoPlaying) {
-      const intervalTime = isArabic ? 6000 : 5000;
-      
-      const intervalId = setInterval(async () => {
-        if (commentary.length === 0) return;
-        
-        setIsPlaying(true);
-        try {
-          await handleTextToSpeech();
-        } finally {
-          setIsPlaying(false);
-        }
-      }, intervalTime);
+    let t11 = performance.now();
+    const executeSpeech = async () => {
+      if (commentary.length === 0) return;
   
-      // Clean up the interval when the component unmounts
+      try {
+        await handleTextToSpeech();
+      } finally {
+      }
+    };
+  
+    if (intervalTime === 0) {
+      // Run instantly on first execution
+      executeSpeech();
+      setIntervalTime(isArabic ? 6000 : 5000); // Set interval time for next runs
+    } else {
+      // Set interval for subsequent executions
+      const intervalId = setInterval(executeSpeech, intervalTime);
       return () => clearInterval(intervalId);
-    // }
-  }, [handleTextToSpeech, commentary, isPlaying, isArabic, isVideoPlaying]);
+    }
+    let t12 = performance.now();
+    console.log(`Execution Time for speech intervals ${t12 - t11} milliseconds.`);
+
+  }, [handleTextToSpeech, commentary, isArabic, intervalTime]);
 
 
   const fetchCommentary = useCallback(async () => {
@@ -342,7 +351,7 @@ useEffect(() => {
 
     //  console.log(isArabicRef.current, pastCommentaries);
     console.log(analystPromptRef.current + "\n\n" + commentatorPromptRef.current);
-    console.time("Fetch Commentary Time");
+    let t3 = performance.now();
       const response = await fetch("/api/commentary", {
         method: "POST",
         headers: {
@@ -360,7 +369,8 @@ useEffect(() => {
       });
 
       const data = await response.json();
-      console.time("Fetch Commentary Time");
+      let t4 = performance.now();
+      console.log(`fetch commentday time: ${t4-t3} milliseconds`);
       // console.log(data);
 
       if (data.text) {
